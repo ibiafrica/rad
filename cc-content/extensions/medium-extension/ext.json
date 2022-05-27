@@ -1,0 +1,14 @@
+{
+	"name" : "ibi medium font",
+	"description" : "ibi medium font editor",
+	"type" : "page",
+    "version" : "1.0",
+    "author" : "ibi",
+    "regid" : "ibi-medium-font",
+	"routes" : [
+		"administrator/page/*"
+	],
+	"loader" : [
+		"medium-font-family.php"
+	]
+}

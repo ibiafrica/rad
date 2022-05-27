@@ -1,0 +1,209 @@
+        .clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+a {
+  color: #5D6975;
+  text-decoration: underline;
+}
+
+body {
+  position: relative;
+  width: 21cm;  
+  height: 29.7cm; 
+  margin: 0 auto; 
+  color: #001028;
+  background: #FFFFFF; 
+  font-family: Arial, sans-serif; 
+  font-size: 12px; 
+  font-family: Arial;
+}
+
+header {
+  padding: 10px 0;
+  margin-bottom: 30px;
+}
+
+#logo {
+ /* text-align: center;*/
+  margin-bottom: 10px;
+}
+
+#logo img {
+  width: 90px;
+}
+/* Pour les titre*/
+.titre_facture {
+  /* border-top: 1px solid  #5D6975;
+  border-bottom: 1px solid  #5D6975; */
+  color: #FFFFFF;
+  font-size: 1.5em;
+  line-height: 1.4em;
+  font-weight: normal;
+  text-align: left;
+  margin: 0 0 20px 0;
+  padding-right: 180px;
+  background-color:#5D6975;
+  /* background: url(dimension.png); */
+}
+.titre_client
+{
+  color: #FFFFFF;
+  font-size: 1.5em;
+  line-height: 1.4em;
+  font-weight: normal;
+  text-align: right;
+  margin: 0 0 20px 0;
+  padding-right: 180px;
+  background-color:#5D6975;
+
+}
+/* Fin */
+#project {
+  float: left;
+  font-size: 14px;
+  line-height: 20px;
+  
+}
+
+
+
+#company {
+  float: right;
+  text-align: right;
+  line-height: 20px;
+  font-size: 15px;
+}
+
+#project div,
+#company div {
+  white-space: nowrap;        
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 20px;
+}
+
+table tr:nth-child(2n-1) td {
+  background: #F5F5F5;
+}
+
+table th,
+table td {
+  text-align: center;
+}
+
+table th {
+  padding: 5px 5px;
+  color: #FFFFFF;
+  border-bottom: 1px solid #C1CED9;
+  background-color: #5D6975;
+  white-space: nowrap;        
+  font-weight: normal;
+}
+.mof
+{
+  padding: 0px 5px;
+}
+
+table .service,
+table .desc {
+  text-align: left;
+}
+.desc
+{
+  
+  text-align: center;
+}
+table td {
+  padding: 5px;
+  text-align: right;
+}
+/* table tr.mof_b {
+ border-right: #FFFFFF;
+} */
+
+table td.service,
+table td.desc {
+  vertical-align: top;
+}
+
+
+td,th
+{
+  border: 1px solid black;
+}
+
+table td.unit,
+table td.qty,
+table td.total {
+  font-size: 1.2em;
+}
+
+table td.grand {
+  border-top: 1px solid #5D6975;;
+}
+
+#notices .notice {
+  color: #5D6975;
+  font-size: 1.2em;
+}
+#notices p
+{
+  color: #FFFFFF;
+  background-color: #001028;
+  font-size: 16px;
+  font-style: italic;
+}
+
+footer {
+  
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  bottom: 80px;
+  /* border-top: 1px solid #C1CED9; */
+  /* padding: 12px 0; */
+  text-align: center;
+  background-color: #C1CED9;
+  color: #FFFFFF;
+}
+.condition{
+  margin: 50px 0px 0px 0px;
+  border: 1px solid black;
+  width: 500px;
+  height: 90px;
+  padding: 0px;
+  
+}
+.condition dt{
+  background-color: #C1CED9;
+  color: #FFFFFF;
+  padding: 3px 0px 0px 0px;
+  border-bottom: 1px solid black;
+}
+.reception{
+  margin: 50px 0px 0px 0px;
+}
+dt{
+  font-weight: bold;
+  font-size: px;
+}
+dd{
+  font-size: 12px;
+  line-height: 14px;
+  
+}
+.reception dd{
+  font-size: 15px;
+  line-height: 35px;
+}
+.cachet div p{
+  margin-top: 100px;
+}
+

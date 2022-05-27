@@ -1,0 +1,14 @@
+{
+	"name" : "ibi editor",
+	"description" : "ibi default editor",
+	"type" : "page",
+    "version" : "1.0",
+    "author" : "ibi",
+    "regid" : "ibi-editor",
+	"routes" : [
+		"administrator/page/*"
+	],
+	"loader" : [
+		"ibi-editor.php"
+	]
+}

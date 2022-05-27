@@ -1,0 +1,14 @@
+{
+	"name" : "ibi page form builder",
+	"description" : "ibi form builder page element widged editor",
+	"type" : "page",
+    "version" : "1.0",
+    "author" : "ibi",
+    "regid" : "ibi-page-form-builder",
+	"routes" : [
+		"administrator/page/*"
+	],
+	"loader" : [
+		"config.php"
+	]
+}

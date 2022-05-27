@@ -1,0 +1,84 @@
+// oject envoyer lors de la update de la commande
+losrk on ajoute klk choz a la commande/ update
+
+{"client_id_commande" => "1", "cmd_code" => "20210529/6/5656",
+ "cmd_id" => "5657", "is_acc" => "false", 
+ "products" => "[
+     {\"item_id\":14,\"sold_quantity\":1,\"item_name\":\"ANANAS\",
+     \"store_id\":2,\"idx\":0,\"selectedCategory\":0,\"categorie_id\":24,\"selectedStore\":0,\"article_id\":14,\"article_codebar\":\"0001-000398\",\"article_store\":2},
+     {\"item_id\":15,\"sold_quantity\":1,\"item_name\":\"BREAK FAST HAGA\",\"store_id\":2,\"idx\":1,\"selectedCategory\":0,\"categorie_id\":24,\"selectedStore\":0,\"article_id\":15,\"article_codebar\":\"0001-000290\",\"article_store\":2}]", "user_id" => "1"}
+
+
+// lors de la creation de la commande
+
+{"client_id_commande" => "1", "products" => "[{\"item_id\":14,\"sold_quantity\":1,\"item_name\":\"ANANAS\",\"store_id\":2,\"idx\":0,\"selectedCategory\":0,\"categorie_id\":24,\"selectedStore\":0,\"article_id\":14,\"article_codebar\":\"0001-000398\",\"article_store\":2},{\"item_id\":15,\"sold_quantity\":1,\"item_name\":\"BREAK FAST HAGA\",\"store_id\":2,\"idx\":1,\"selectedCategory\":0,\"categorie_id\":24,\"selectedStore\":0,\"article_id\":15,\"article_codebar\":\"0001-000290\",\"article_store\":2},{\"item_id\":17,\"sold_quantity\":1,\"item_name\":\"DANISH PASTRIES\",\"store_id\":2,\"idx\":3,\"selectedCategory\":0,\"categorie_id\":24,\"selectedStore\":0,\"article_id\":17,\"article_codebar\":\"0001-000292\",\"article_store\":2},{\"item_id\":18,\"sold_quantity\":1,\"item_name\":\"ZANZI OMELETTE\",\"store_id\":2,\"idx\":4,\"selectedCategory\":0,\"categorie_id\":24,\"selectedStore\":0,\"article_id\":18,\"article_codebar\":\"0001-000293\",\"article_store\":2},{\"item_id\":16,\"sold_quantity\":2,\"item_name\":\"FULL BREAK FAST TRAY\",\"store_id\":2,\"idx\":2,\"selectedCategory\":0,\"categorie_id\":24,\"selectedStore\":0,\"article_id\":16,\"article_codebar\":\"0001-000291\",\"article_store\":2}]", "table_id" => "2", "user_id" => "1"}
+
+
+//request void
+
+{"order_id" => "5658"}
+requete: "UPDATE `pos_ibi_commandes` AS r0 SET r0.`commande_void_request` = 1 WHERE (r0.`id_pos_ibi_commandes` = 5658)"
+
+
+// request split
+
+%{"order_id" => "5657"}
+
+UPDATE `pos_ibi_commandes` AS r0 SET r0.`commande_split_request` = 1 WHERE (r0.`id_pos_ibi_commandes` = ?) ["5657"]
+
+  
+// confirm split
+
+{"client_id" => "1", "cmd_id" => "5657", "created_at" => "2021-05-29T12:09:54", "created_by" => "1", "products" => "[{\"prod_id\":10039,\"article_codebar\":\"0001-000290\",\"store_id\":2,\"prix\":10000.0,\"sold_quantity\":1},{\"prod_id\":10040,\"article_codebar\":\"0001-000291\",\"store_id\":2,\"prix\":18500.0,\"sold_quantity\":1}]"}
+
+
+
+
+// PAYMENTS
+
+
+[info] GET /api/payments_modes
+SELECT m0.`id_mode_paiement`, m0.`designation_paiement_mode` FROM `mode_paiement` AS m0 []
+
+[info] GET /api/payments_factures
+SELECT t0.`id_type_facture`, t0.`designation_type_facture` FROM `type_facture` AS t0 WHERE (t0.`is_pos` = 0) []
+
+
+
+
+
+// creation dun payment
+
+{"client_id" => "1", "cmd_id" => "4059", "facture" => "1", "payments" => "[{\"mode\":null,\"amount\":0.0},{\"mode\":null,\"amount\":0.0}]", "user_id" => "740"}
+
+1. selctionner le shifts overt du user_id
+
+SELECT c0.`id_shift` FROM `cashier_shifts` AS c0 WHERE ((c0.`created_by_shift` = ?) AND (c0.`shift_status` = 0)) ["740"]
+
+2. update la colonne shift dans la table commande avec le shift du caissier
+
+UPDATE `pos_ibi_commandes` AS r0 SET r0.`commande_status` = ?, r0.`id_cashier_shift` = ? WHERE (r0.`id_pos_ibi_commandes` = ?) [10, 150, "4059"]
+3. insert payments dans la table payment
+
+INSERT INTO `pos_paiements` (`client_id_paiement`,`commande_id`,`created_by_paiement`,`montant_paiement`,`shift_id`,`type_facture`) VALUES (?,?,?,?,?,?) ["1", "4059", "740", 0, 150, "1"]
+
+SELECT r0.`code` FROM `pos_ibi_commandes` AS r0 WHERE (r0.`id_pos_ibi_commandes` = ?) ["4059"]
+
+SELECT r0.`id_store` FROM `pos_ibi_stores` AS r0 WHERE ((r0.`is_pos` = 1) AND (r0.`status_store` = 'opened')) []
+
+UPDATE `pos_store_2_ibi_articles_stock_flow` AS r0 SET r0.`shift_id_s` = ? WHERE (r0.`ref_command_code_sf` = ?) [150, "20210502/7/4058"]
+
+UPDATE `pos_store_5_ibi_articles_stock_flow` AS r0 SET r0.`shift_id_s` = ? WHERE (r0.`ref_command_code_sf` = ?) [150, "20210502/7/4058"]
+
+UPDATE `pos_store_8_ibi_articles_stock_flow` AS r0 SET r0.`shift_id_s` = ? WHERE (r0.`ref_command_code_sf` = ?) [150, "20210502/7/4058"]
+
+UPDATE `pos_store_4_ibi_articles_stock_flow` AS r0 SET r0.`shift_id_s` = ? WHERE (r0.`ref_command_code_sf` = ?) [150, "20210502/7/4058"]
+
+
+[info] GET /api/waiters
+[debug] Processing with PosWeb.StaffController.all_waiters/2
+  Parameters: %{}
+  Pipelines: [:api]
+[debug] QUERY OK source="aauth_users" db=1.5ms idle=277.8ms
+SELECT a0.`id`, a0.`full_name` FROM `aauth_users` AS a0 WHERE (a0.`banned` = 0) ORDER BY a0.`full_name` []
+[info] Sent 200 in 3ms

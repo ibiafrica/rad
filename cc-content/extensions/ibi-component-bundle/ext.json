@@ -1,0 +1,14 @@
+{
+	"name" : "Ibi component bundle",
+	"description" : "ibi default compnent",
+	"type" : "page",
+    "version" : "1.0",
+    "author" : "ibi",
+    "regid" : "ibi-component-bundle",
+	"routes" : [
+		"administrator/page/(:any)"
+	],
+	"loader" : [
+		"ibi-component-bundle.php"
+	]
+}
