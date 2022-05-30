@@ -179,6 +179,19 @@ $route['requisition/:num/edit/(:any)'] = "administrator/requisition/edit";
 
 $route['requisition_recu/:num/approbation/(:any)'] = "administrator/requisition_recu/approbation";
 
+
+//Pour bon livraison
+// $route['bon_livraison/:num/deleterArticle'] = "administrator/requisition/deleterArticle";
+// $route['bon_livraison/:num/index'] = "administrator/requisition/index";
+// $route['bon_livraison/:num/index/:num'] = "administrator/requisition/index";
+
+// $route['requisition_recu/:num/index'] = "administrator/requisition_recu/index";
+// $route['requisition/:num/add'] = "administrator/requisition/add";
+// $route['requisition/:num/view/(:any)'] = "administrator/requisition/view";
+// $route['requisition/:num/edit/(:any)'] = "administrator/requisition/edit";
+
+// $route['requisition_recu/:num/approbation/(:any)'] = "administrator/requisition_recu/approbation";
+
 //Pour les approvisionements
 
 $route['approvisionnements/:num/index'] = "administrator/approvisionnements/index";

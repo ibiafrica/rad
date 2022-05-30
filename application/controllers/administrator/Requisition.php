@@ -224,6 +224,9 @@ class Requisition extends Admin
                 $ins = $this->model_rm->insert('pos_ibi_article_requisition', $data);
             }
 
+            // dump($data);
+            // die;
+
             if ($save_id) {
                 if ($this->input->post('save_type') == 'stay') {
                     $this->data['success'] = true;

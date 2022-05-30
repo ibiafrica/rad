@@ -233,7 +233,7 @@ class Model_registers extends MY_Model
     {
         $this->db->where($criteres);
         $query = $this->db->get($table);
-        return $query->row_array();
+        return $query->row();
     }
     public function getOneJoin($table, $table1, $criteres1, $table2, $criteres2, $critere=array())
     {
@@ -248,12 +248,14 @@ class Model_registers extends MY_Model
             return $query->row_array();
         }
     }
+
     public function getList($table, $criteres = array())
     {
         $this->db->where($criteres);
         $query = $this->db->get($table);
         return $query->result_array();
     }
+
     public function record_countsome($table, $criteres)
     {
         $this->db->where($criteres);
@@ -262,12 +264,14 @@ class Model_registers extends MY_Model
             return $query->num_rows();
         }
     }
+
     public function update($table, $criteres, $data)
     {
         $this->db->where($criteres);
         $query = $this->db->update($table, $data);
         return ($query) ? true : false;
     }
+    
     public function update_batch($table,$data){
       
         $query = $this->db->update_batch($table, $data);

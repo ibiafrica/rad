@@ -34,6 +34,7 @@ class Model_rm extends MY_Model
       return $this->db->insert_id();
     }
   }
+  
   function insertArray($table, $data)
   {
     $query = $this->db->insert_batch($table, $data);
@@ -131,6 +132,14 @@ class Model_rm extends MY_Model
         if ($query) {
             return $query->result();
         }
+    }
+
+    public function search($requete)
+    {
+        return $query = $this->db->query($requete)->result();
+        // if ($query) {
+        //     return $query;
+        // }
     }
 
   function getListLimit($table, $limit, $cond = array())
