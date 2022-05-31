@@ -102,7 +102,7 @@ jQuery(document).ready(domo);
                            <th>CODE </th>
                            <th>REF CLIENT </th>
                            <!-- <th>STATUS </th> -->
-                           <th>CREATE BY </th>
+                           <th>AUTEUR </th>
                            <th>DATE CREATION </th>
                            <th>Action</th>
                         </tr>

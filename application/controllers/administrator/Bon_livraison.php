@@ -30,14 +30,7 @@ class Bon_livraison extends Admin
 	*/
 	public function index()
 	{
-		// $offset = $this->uri->segment(4);
-        // $store = $this->uri->segment(2);
 		$this->is_allowed('bon_livraison_list');
-
-		// if ($store == 0) {
-        //     set_message('Veuillez selectionner un store pour avoir accès aux données', 'error');
-        //     redirect('administrator/stores');
-        // }
 
 		$filter = $this->input->get('q');
 		$field 	= $this->input->get('f');

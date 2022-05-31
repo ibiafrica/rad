@@ -7,7 +7,7 @@ function domo(){
  
    // Binding keys
    $('*').bind('keydown', 'Ctrl+a', function assets() {
-       window.location.href = BASE_URL + '/administrator/Livraison/add';
+       window.location.href = BASE_URL + '/administrator/Livraison_detail/add';
        return false;
    });
 
@@ -33,10 +33,10 @@ jQuery(document).ready(domo);
 <!-- Content Header (Page header) -->
 <section class="content-header">
    <h1>
-      Livraison   </h1>
+      Livraison Detail   </h1>
    <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Livraison</li>
+      <li class="active">Livraison Detail</li>
    </ol>
 </section>
 <!-- Main content -->
@@ -49,7 +49,7 @@ jQuery(document).ready(domo);
                <!-- Widget: user widget style 1 -->
 
 
-                  <form name="form_livraison" id="form_livraison" action="<?= base_url('administrator/livraison/index'); ?>">
+                  <form name="form_livraison_detail" id="form_livraison_detail" action="<?= base_url('administrator/livraison_detail/index'); ?>">
                   
                       <!-- /.widget-user -->
                  <div class="row">
@@ -76,14 +76,14 @@ jQuery(document).ready(domo);
                            </a>
                      </div>
                      <div class="col-sm-8"> 
-                         <?php is_allowed('livraison_add', function(){?>
-                        <a class="btn btn-flat btn-success btn_add_new" id="btn_add_new" title="<?= cclang('add_new_button', ['']); ?>  (Ctrl+a)" href="<?=  site_url('administrator/livraison/add'); ?>"><i class="fa fa-plus" ></i> </a>
+                         <?php is_allowed('livraison_detail_add', function(){?>
+                        <a class="btn btn-flat btn-success btn_add_new" id="btn_add_new" title="<?= cclang('add_new_button', ['']); ?>  (Ctrl+a)" href="<?=  site_url('administrator/livraison_detail/add'); ?>"><i class="fa fa-plus" ></i> </a>
                         <?php }) ?>
-                        <?php is_allowed('livraison_export', function(){?>
-                        <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> Livraison" href="<?= site_url('administrator/livraison/export'); ?>"><i class="fa fa-file-excel-o" ></i> </a>
+                        <?php is_allowed('livraison_detail_export', function(){?>
+                        <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> Livraison Detail" href="<?= site_url('administrator/livraison_detail/export'); ?>"><i class="fa fa-file-excel-o" ></i> </a>
                         <?php }) ?>
-                        <?php is_allowed('livraison_export', function(){?>
-                        <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> pdf Livraison" href="<?= site_url('administrator/livraison/export_pdf'); ?>"><i class="fa fa-file-pdf-o" ></i> </a>
+                        <?php is_allowed('livraison_detail_export', function(){?>
+                        <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> pdf Livraison Detail" href="<?= site_url('administrator/livraison_detail/export_pdf'); ?>"><i class="fa fa-file-pdf-o" ></i> </a>
                         <?php }) ?>
                         
                      </div>
@@ -92,7 +92,39 @@ jQuery(document).ready(domo);
                   </div>
 
 
-                     <hr>
+
+                <div class="row" style="margin-right: -10%;">
+                   <div class="col-md-3 col-lg-3 col-sm-3">
+                           </div>
+                           <div class="col-md-6 col-lg-6 col-sm-6">
+                           <div class="col-md-12 col-lg-12 col-sm-12">
+                              
+                              <div class="col-sm-9 col-lg-9 col-md-9" >
+                                 <input type="text" class="form-control" name="q" id="filter" placeholder="<?= 'Recherher'; ?>" value="<?= $this->input->get('q'); ?>">
+                              </div> 
+                              <input type="hidden" name="f" id="field"> 
+                              <div class="col-sm-2 col-lg-2 col-md-2" >
+                                 <button type="submit" class="btn btn-flat" name="sbtn" id="sbtn" value="Apply" title="<?= cclang('filter_search'); ?>">
+                                 <i class="fa fa-search"></i>
+                                 </button>
+                               </div>
+                           
+                              </div>
+                           </div> 
+                           <div class="col-md-3 col-lg-3 col-sm-3" >
+                        <?php is_allowed('livraison_detail_add', function(){?>
+                        <a class="btn btn-flat btn-success btn_add_new" id="btn_add_new" title="<?= cclang('add_new_button', ['']); ?>  (Ctrl+a)" href="<?=  site_url('administrator/livraison_detail/add'); ?>"><i class="fa fa-plus-square-o" ></i> </a>
+                        <?php }) ?>
+                        <?php is_allowed('livraison_detail_export', function(){?>
+                        <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> Livraison Detail" href="<?= site_url('administrator/livraison_detail/export'); ?>"><i class="fa fa-file-excel-o" ></i> </a>
+                        <?php }) ?>
+                        <?php is_allowed('livraison_detail_export', function(){?>
+                        <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> pdf Livraison Detail" href="<?= site_url('administrator/livraison_detail/export_pdf'); ?>"><i class="fa fa-file-pdf-o" ></i> </a>
+                        <?php }) ?>
+                       </div>
+                   </div>
+            </div>
+ <hr>
                   <div class="table-responsive row"> 
                   <table class="table table-bordered table-striped dataTable">
                      <thead>
@@ -100,41 +132,37 @@ jQuery(document).ready(domo);
                            <th>
                             <input type="checkbox" class="flat-red toltip" id="check_all" name="check_all" title="check all">
                            </th>
-                           <th>CODE</th>
-                           <th>CLIENT </th>
-                           <th>DATE CREATION </th>
-                           <th>AUTHOR</th>
+                           <th>REF ID L</th>
+                           <th>REF ID BL</th>
                            <th>Action</th>
                         </tr>
                      </thead>
-                     <tbody id="tbody_livraison">
-                     <?php foreach($livraisons as $livraison): ?>
+                     <tbody id="tbody_livraison_detail">
+                     <?php foreach($livraison_details as $livraison_detail): ?>
                         <tr>
                            <td width="5">
-                              <input type="checkbox" class="flat-red check" name="id[]" value="<?= $livraison->ID_LIV; ?>">
+                              <input type="checkbox" class="flat-red check" name="id[]" value="<?= $livraison_detail->ID_LVD; ?>">
                            </td>
                            
-                           <td><?= _ent($livraison->CODE_LIV); ?></td> 
-                           <td><?= _ent($livraison->NOM_CLIENT); ?></td> 
-                           <td><?= _ent($livraison->DATE_CREATION_LIV); ?></td> 
-                           <td><?= _ent($livraison->full_name); ?></td> 
+                           <td><?= _ent($livraison_detail->REF_ID_L); ?></td> 
+                           <td><?= _ent($livraison_detail->REF_ID_BL); ?></td> 
                            <td width="200">
-                              
-                              <button type="button" class="btn btn-warning btn-xs" onclick="view(this)" data-href="<?=$livraison->ID_LIV?>" title="Detail"><i class="fa fa-eye" ></i></button>
-
-                              <!-- <?php //is_allowed('livraison_update', function() use ($livraison){?>
-                              <a href="<?php //= site_url('administrator/livraison/edit/' . $livraison->ID_LIV); ?>" class="btn btn-info btn-xs"><i class="fa fa-pencil " ></i> </a>
-                              <?php //}) ?> -->
-                              <?php is_allowed('livraison_delete', function() use ($livraison){?>
-                              <a href="javascript:void(0);" data-href="<?= site_url('administrator/livraison/delete/' . $livraison->ID_LIV); ?>" class="btn btn-danger btn-xs  remove-data"><i class="fa fa-close"></i></a>
+                              <?php is_allowed('livraison_detail_view', function($livraison_detail) use ($livraison_detail){?>
+                              <a style="margin-right: 2px" href="<?= site_url('administrator/livraison_detail/view/' . $livraison_detail->ID_LVD); ?>"  class="btn btn-warning btn-xs"><i class="fa fa-eye-slash"></i></a>
+                              <?php }) ?>
+                              <?php is_allowed('livraison_detail_update', function($livraison_detail) use ($livraison_detail){?>
+                              <a href="<?= site_url('administrator/livraison_detail/edit/' . $livraison_detail->ID_LVD); ?>" class="btn btn-info btn-xs"><i class="fa fa-pencil " ></i> </a>
+                              <?php }) ?>
+                              <?php is_allowed('livraison_detail_delete', function($livraison_detail) use ($livraison_detail){?>
+                              <a href="javascript:void(0);" data-href="<?= site_url('administrator/livraison_detail/delete/' . $livraison_detail->ID_LVD); ?>" class="btn btn-danger btn-xs  remove-data"><i class="fa fa-close"></i></a>
                                <?php }) ?>
                            </td>
                         </tr>
                       <?php endforeach; ?>
-                      <?php if ($livraison_counts == 0) :?>
+                      <?php if ($livraison_detail_counts == 0) :?>
                          <tr>
                            <td colspan="100">
-                           Livraison data is not available
+                           Livraison Detail data is not available
                            </td>
                          </tr>
                       <?php endif; ?>
@@ -161,114 +189,7 @@ jQuery(document).ready(domo);
 </section>
 <!-- /.content -->
 
-<div class="modal fade bd-example-modal-lg" id="myModal_view" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-         <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="CodeBarreLabel">Bon livraison</h5>
-               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-               </button>
-            </div>
-            <div class="modal-body" id="retrieveData">
-               <table class="table table-striped table-dark">
-                  <thead>
-                     <th class='text-center'>Code bon livraison</th>
-                     <th class='text-center'>Client</th>
-                     <th class='text-center'>Status</th>
-                     <th class='text-center'>Auteur</th>
-                     <th class='text-center'>Date de creation</th>
-                     <!-- <th class='text-center'>Status</th> -->
-                  </thead>
-                  <tbody id="tbl"></tbody>
-               </table>
-            </div>
-            <div class="modal-header">
-            <h5 class="modal-title" id="CodeBarreLabel">Details</h5>
-            </div>
-            <div class="modal-body modModal" id="retrieveData">
-               <table class="table table-striped">
-                  <thead>
-                     <th class='text-center'>Code Livraison</th>
-                     <th class='text-center'>Code Bon Livraison</th>
-                     
-                  </thead>
-                  <tbody id="tBlDetail"></tbody>
-               </table>
-            </div>
-            <div class="modal-footer">
-               <a type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-close" id="approved"></i>&nbsp;Close</a>
-            </div>
-         </div>
-      </div>
-</div>
-
-
-
 <!-- Page script -->
-
-<script>
-   function view(th){
-      
-      let id_l = th.getAttribute("data-href");
-      let transferId = $(".modModal");
-      $("#myModal_view").modal("show");
-      let tableInner = "";
-      let tableBl = "";
-      let total = 0;
-      
-      $.ajax({
-         url: BASE_URL + "administrator/livraison/getDetail/" + id_l,
-         type: 'POST',
-         dataType: 'json',
-         // data: code_pkl
-      })
-      .done(function(res){
-         // console.log(res)
-         // return
-         let tableBlData = Object.values(res.livraison);
-         let tableBlDetail = Object.values(res.livraison_details);
-
-         tableBlDetail.forEach(function(item) {
-            // total += item.PRIX_TOTAL_BLD;
-            tableInner += "<tr>";
-            tableInner += "<td class='text-center'>";
-            tableInner += item.CODE_LIV;
-            tableInner += "</td>";
-            tableInner += "<td class='text-center'>";
-            tableInner += item.CODE_BL;
-            tableInner += "</td>";
-         })
-
-            tableBl += "<tr class='table-info'>";
-            tableBl += "<td class='text-center'>";
-            tableBl += res.livraison.CODE_LIV;
-            tableBl += "</td>";
-            tableBl += "<td class='text-center'>";
-            tableBl += res.livraison.NOM_CLIENT;
-            tableBl += "</td>";
-            // tableBl += "<td class='text-center'>";
-            // tableBl += res.bon_livraison.STATUS_BL;
-            // tableBl += "</td>";
-            tableBl += "<td class='text-center'>";
-            tableBl += res.livraison.full_name;
-            tableBl += "</td>";
-            tableBl += "<td class='text-center'>";
-            tableBl += res.livraison.DATE_CREATION_BL;
-            tableBl += "</td>";
-            // tableBl += "<td class='text-center'>";
-            // tableBl += "<a href='#' class='btn btn-warning btn-xs'>En attente</a>";
-            // tableBl += "</td>";
-            tableBl += "</tr>";
-
-            console.log(total)
-
-         $("#tbl").html(tableBl);
-         $("#tBlDetail").html(tableInner);    
-      })
-
-   }
-</script>
 <script>
   $(document).ready(function(){
    
@@ -279,7 +200,7 @@ jQuery(document).ready(domo);
       swal({
           title: "<?= cclang('are_you_sure'); ?>",
           text: "<?= cclang('data_to_be_deleted_can_not_be_restored'); ?>",
-         //  type: "input",
+          type: "input",
           showCancelButton: true,
           confirmButtonColor: "#DD6B55",
           confirmButtonText: "<?= cclang('yes_delete_it'); ?>",
@@ -289,10 +210,20 @@ jQuery(document).ready(domo);
           animation:"slide-from-top",
           inputPlaceholder: "Donnez un commentaire S.V.P."
         },
-          function(isConfirm){
-            if (isConfirm) {
-               document.location.href = url;      
+        function(inputValue){
+            if (inputValue === false) {
+               return false;
             }
+            if (inputValue === "") {
+               swal.showInputError("Vous devriez ecrire un commentaire SVP.!!!");
+               return false;
+            }
+            document.location.href = url +'?inputValue=' +inputValue;
+          },
+          function(isConfirm){
+            // if (isConfirm) {
+            //    document.location.href = BASE_URL + '/administrator/livraison_detail/delete?' + serialize_bulk;      
+            // }
           });
 
       return false;
@@ -302,7 +233,7 @@ jQuery(document).ready(domo);
     $('#apply').click(function(){
 
       var bulk = $('#bulk');
-      var serialize_bulk = $('#form_livraison').serialize();
+      var serialize_bulk = $('#form_livraison_detail').serialize();
 
       if (bulk.val() == 'delete') {
          swal({
@@ -330,7 +261,7 @@ jQuery(document).ready(domo);
           },
           function(isConfirm){
             // if (isConfirm) {
-            //    document.location.href = BASE_URL + '/administrator/livraison/delete?' + serialize_bulk;      
+            //    document.location.href = BASE_URL + '/administrator/livraison_detail/delete?' + serialize_bulk;      
             // }
           });
 

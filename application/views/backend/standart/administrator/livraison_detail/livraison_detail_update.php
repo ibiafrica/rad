@@ -26,11 +26,11 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Livraison        <small>Edit Livraison</small>
+        Livraison Detail        <small>Edit Livraison Detail</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class=""><a  href="<?= site_url('administrator/livraison'); ?>">Livraison</a></li>
+        <li class=""><a  href="<?= site_url('administrator/livraison_detail'); ?>">Livraison Detail</a></li>
         <li class="active">Edit</li>
     </ol>
 </section>
@@ -48,85 +48,33 @@
                                 <img class="img-circle" src="<?= BASE_ASSET; ?>/img/add2.png" alt="User Avatar">
                             </div>
                             <!-- /.widget-user-image -->
-                            <h3 class="widget-user-username">Livraison</h3>
-                            <h5 class="widget-user-desc">Edit Livraison</h5>
+                            <h3 class="widget-user-username">Livraison Detail</h3>
+                            <h5 class="widget-user-desc">Edit Livraison Detail</h5>
                             <hr>
                         </div>
-                        <?= form_open(base_url('administrator/livraison/edit_save/'.$this->uri->segment(4)), [
-                            'name'    => 'form_livraison', 
+                        <?= form_open(base_url('administrator/livraison_detail/edit_save/'.$this->uri->segment(4)), [
+                            'name'    => 'form_livraison_detail', 
                             'class'   => 'form-horizontal', 
-                            'id'      => 'form_livraison', 
+                            'id'      => 'form_livraison_detail', 
                             'method'  => 'POST'
                             ]); ?>
                          
                                                 <div class="form-group ">
-                            <label for="CODE_LIV" class="col-sm-2 control-label">CODE LIV 
+                            <label for="REF_ID_L" class="col-sm-2 control-label">REF ID L 
                             <i class="required">*</i>
                             </label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" name="CODE_LIV" id="CODE_LIV" placeholder="CODE LIV" value="<?= set_value('CODE_LIV', $livraison->CODE_LIV); ?>">
+                                <input type="number" class="form-control" name="REF_ID_L" id="REF_ID_L" placeholder="REF ID L" value="<?= set_value('REF_ID_L', $livraison_detail->REF_ID_L); ?>">
                                
                             </div>
                         </div>
                                                  
                                                 <div class="form-group ">
-                            <label for="CLIENT_LIV" class="col-sm-2 control-label">CLIENT LIV 
+                            <label for="REF_ID_BL" class="col-sm-2 control-label">REF ID BL 
                             <i class="required">*</i>
                             </label>
                             <div class="col-sm-8">
-                                <input type="number" class="form-control" name="CLIENT_LIV" id="CLIENT_LIV" placeholder="CLIENT LIV" value="<?= set_value('CLIENT_LIV', $livraison->CLIENT_LIV); ?>">
-                               
-                            </div>
-                        </div>
-                                                 
-                                                <div class="form-group ">
-                            <label for="DATE_CREATION_LIV" class="col-sm-2 control-label">DATE CREATION LIV 
-                            <i class="required">*</i>
-                            </label>
-                            <div class="col-sm-6">
-                            <div class="input-group date col-sm-8">
-                              <input type="text" class="form-control pull-right datetimepicker" name="DATE_CREATION_LIV"  placeholder="DATE CREATION LIV" id="DATE_CREATION_LIV" value="<?= set_value('DATE_CREATION_LIV', $livraison->DATE_CREATION_LIV); ?>">
-                            </div>
-                                                    </div>
-                        </div>
-                                                 
-                                                <div class="form-group ">
-                            <label for="DATE_MOD_LIV" class="col-sm-2 control-label">DATE MOD LIV 
-                            <i class="required">*</i>
-                            </label>
-                            <div class="col-sm-6">
-                            <div class="input-group date col-sm-8">
-                              <input type="text" class="form-control pull-right datetimepicker" name="DATE_MOD_LIV"  placeholder="DATE MOD LIV" id="DATE_MOD_LIV" value="<?= set_value('DATE_MOD_LIV', $livraison->DATE_MOD_LIV); ?>">
-                            </div>
-                                                    </div>
-                        </div>
-                                                 
-                                                <div class="form-group ">
-                            <label for="AUTHOR" class="col-sm-2 control-label">AUTHOR 
-                            <i class="required">*</i>
-                            </label>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" name="AUTHOR" id="AUTHOR" placeholder="AUTHOR" value="<?= set_value('AUTHOR', $livraison->AUTHOR); ?>">
-                               
-                            </div>
-                        </div>
-                                                 
-                                                <div class="form-group ">
-                            <label for="STATUS_LIV" class="col-sm-2 control-label">STATUS LIV 
-                            <i class="required">*</i>
-                            </label>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" name="STATUS_LIV" id="STATUS_LIV" placeholder="STATUS LIV" value="<?= set_value('STATUS_LIV', $livraison->STATUS_LIV); ?>">
-                               
-                            </div>
-                        </div>
-                                                 
-                                                <div class="form-group ">
-                            <label for="STATUS_DELETE_LIV" class="col-sm-2 control-label">STATUS DELETE LIV 
-                            <i class="required">*</i>
-                            </label>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" name="STATUS_DELETE_LIV" id="STATUS_DELETE_LIV" placeholder="STATUS DELETE LIV" value="<?= set_value('STATUS_DELETE_LIV', $livraison->STATUS_DELETE_LIV); ?>">
+                                <input type="number" class="form-control" name="REF_ID_BL" id="REF_ID_BL" placeholder="REF ID BL" value="<?= set_value('REF_ID_BL', $livraison_detail->REF_ID_BL); ?>">
                                
                             </div>
                         </div>
@@ -177,7 +125,7 @@
           },
           function(isConfirm){
             if (isConfirm) {
-              window.location.href = BASE_URL + 'administrator/livraison';
+              window.location.href = BASE_URL + 'administrator/livraison_detail';
             }
           });
     
@@ -187,22 +135,22 @@
       $('.btn_save').click(function(){
         $('.message').fadeOut();
             
-        var form_livraison = $('#form_livraison');
-        var data_post = form_livraison.serializeArray();
+        var form_livraison_detail = $('#form_livraison_detail');
+        var data_post = form_livraison_detail.serializeArray();
         var save_type = $(this).attr('data-stype');
         data_post.push({name: 'save_type', value: save_type});
     
         $('.loading').show();
     
         $.ajax({
-          url: form_livraison.attr('action'),
+          url: form_livraison_detail.attr('action'),
           type: 'POST',
           dataType: 'json',
           data: data_post,
         })
         .done(function(res) {
           if(res.success) {
-            var id = $('#livraison_image_galery').find('li').attr('qq-file-id');
+            var id = $('#livraison_detail_image_galery').find('li').attr('qq-file-id');
             if (save_type == 'back') {
               window.location.href = res.redirect;
               return;
