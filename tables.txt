@@ -1,0 +1,188 @@
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bon_livraison`
+--
+
+CREATE TABLE `bon_livraison` (
+  `ID_BL` int(11) NOT NULL,
+  `CODE_BL` varchar(255) NOT NULL,
+  `REF_CLIENT_BL` int(11) NOT NULL,
+  `STATUS_BL` int(11) NOT NULL DEFAULT 0,
+  `STATUS_DELETE_BL` int(11) NOT NULL DEFAULT 0,
+  `CREATE_BY_BL` int(11) NOT NULL,
+  `DATE_CREATION_BL` datetime NOT NULL DEFAULT current_timestamp(),
+  `DATE_MODIFICATION_BL` datetime DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `bon_livraison`
+--
+
+INSERT INTO `bon_livraison` (`ID_BL`, `CODE_BL`, `REF_CLIENT_BL`, `STATUS_BL`, `STATUS_DELETE_BL`, `CREATE_BY_BL`, `DATE_CREATION_BL`, `DATE_MODIFICATION_BL`) VALUES
+(1, 'BL00001', 12, 1, 0, 1, '2022-05-30 10:05:23', '2022-06-01 08:07:26'),
+(2, 'BL00002', 19, 0, 0, 1, '2022-05-30 10:05:19', '2022-05-30 15:31:42'),
+(3, 'BL00003', 12, 0, 0, 1, '2022-05-30 15:05:19', NULL),
+(4, 'BL00004', 22, 0, 1, 1, '2022-05-30 15:05:34', '2022-05-30 15:48:38'),
+(5, 'BL00005', 22, 0, 0, 1, '2022-05-30 15:05:54', NULL);
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `bon_livraison`
+--
+ALTER TABLE `bon_livraison`
+  ADD PRIMARY KEY (`ID_BL`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `bon_livraison`
+--
+ALTER TABLE `bon_livraison`
+  MODIFY `ID_BL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+COMMIT;
+
+
+-- Structure de la table `bon_livraison_details`
+--
+
+CREATE TABLE `bon_livraison_details` (
+  `ID_BLD` int(11) NOT NULL,
+  `REF_ID_BL` int(11) NOT NULL,
+  `REF_BON_LIVRAISON` varchar(100) NOT NULL,
+  `CODE_PRODUIT_BLD` varchar(100) NOT NULL,
+  `NOM_PRODUIT_BLD` varchar(100) NOT NULL,
+  `PRIX_UNITAIRE_BLD` int(11) DEFAULT NULL,
+  `QUANTITE_BLD` int(11) NOT NULL,
+  `PRIX_TOTAL_BLD` int(11) DEFAULT NULL,
+  `STATUS_BLD` int(11) DEFAULT 0,
+  `STATUS_DELETE_BLD` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `bon_livraison_details`
+--
+
+INSERT INTO `bon_livraison_details` (`ID_BLD`, `REF_ID_BL`, `REF_BON_LIVRAISON`, `CODE_PRODUIT_BLD`, `NOM_PRODUIT_BLD`, `PRIX_UNITAIRE_BLD`, `QUANTITE_BLD`, `PRIX_TOTAL_BLD`, `STATUS_BLD`, `STATUS_DELETE_BLD`) VALUES
+(1, 1, 'BL00001', '01RD00053', 'TOLE  1mm', 0, 30, 0, 0, 0),
+(2, 1, 'BL00001', '01RD00060', 'TOLE STD 3mm', 0, 50, 0, 0, 0),
+(3, 2, 'BL00002', '01RD00001', 'TUBE 16 x16  1er Q', 15000, 30, 450000, 0, 0),
+(4, 2, 'BL00002', '01RD00003', 'Tubes 25x25', 0, 20, 0, 0, 0),
+(5, 5, 'BL00005', '01RD00053', 'TOLE  1mm', 0, 345, 0, 0, 0),
+(6, 5, 'BL00005', '01RD00054', 'TOLE 1.2mm', 0, 40, 0, 0, 0),
+(7, 5, 'BL00005', '01RD00066', 'TUYAUX Galvanise 1/2', 0, 50, 0, 0, 0),
+(8, 5, 'BL00005', '01RD00100', 'CLOUS  X Clous de 12 X Sac', 0, 6, 0, 0, 0);
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `bon_livraison_details`
+--
+ALTER TABLE `bon_livraison_details`
+  ADD PRIMARY KEY (`ID_BLD`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `bon_livraison_details`
+--
+ALTER TABLE `bon_livraison_details`
+  MODIFY `ID_BLD` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+COMMIT;
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `livraison`
+--
+
+CREATE TABLE `livraison` (
+  `ID_LIV` int(11) NOT NULL,
+  `CODE_LIV` varchar(100) NOT NULL,
+  `CLIENT_LIV` int(11) NOT NULL,
+  `DATE_CREATION_LIV` datetime NOT NULL DEFAULT current_timestamp(),
+  `DATE_MOD_LIV` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `AUTHOR` int(11) NOT NULL,
+  `STATUS_LIV` int(11) NOT NULL DEFAULT 0,
+  `STATUS_DELETE_LIV` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `livraison`
+--
+
+INSERT INTO `livraison` (`ID_LIV`, `CODE_LIV`, `CLIENT_LIV`, `DATE_CREATION_LIV`, `DATE_MOD_LIV`, `AUTHOR`, `STATUS_LIV`, `STATUS_DELETE_LIV`) VALUES
+(1, 'LV00001', 12, '2022-06-01 08:06:26', NULL, 1, 0, 0);
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `livraison`
+--
+ALTER TABLE `livraison`
+  ADD PRIMARY KEY (`ID_LIV`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `livraison`
+--
+ALTER TABLE `livraison`
+  MODIFY `ID_LIV` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+COMMIT;
+
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `livraison_detail`
+--
+
+CREATE TABLE `livraison_detail` (
+  `ID_LVD` int(11) NOT NULL,
+  `REF_ID_L` int(11) NOT NULL,
+  `REF_ID_BL` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `livraison_detail`
+--
+
+INSERT INTO `livraison_detail` (`ID_LVD`, `REF_ID_L`, `REF_ID_BL`) VALUES
+(1, 1, 1);
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `livraison_detail`
+--
+ALTER TABLE `livraison_detail`
+  ADD PRIMARY KEY (`ID_LVD`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `livraison_detail`
+--
+ALTER TABLE `livraison_detail`
+  MODIFY `ID_LVD` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+COMMIT;
