@@ -118,7 +118,7 @@ margin-bottom: 12px;
                                   </thead>
                                   <tbody id="tableId">
                                     <?php foreach($bon_livraison_details as $detail): ?>
-                                      <tr id="${ii}">
+                                      <tr id="">
                                           <input id="id_art" type="hidden" name="id_art[]" value="<?= $detail['ID_BLD']; ?>">
                                           <td>
                                             <input type="hidden" name="code_bar[]" value="<?= $detail['CODE_PRODUIT_BLD']; ?>"><?= $detail['CODE_PRODUIT_BLD']; ?>
@@ -191,14 +191,14 @@ margin-bottom: 12px;
 //     $('.loading').show();
 //     $('#myUL').attr('hidden', 'true');
 //     $('#myInput').val('');
-//     let id_req = "<?php echo $this->uri->segment(4)?>";
+//     let id_req = "<?php //echo $this->uri->segment(4)?>";
 
 //     $.ajax({
 
-//       url:BASE_URL + 'administrator/requisition/getIngredients_modifier/<?php echo $this->uri->segment(2)?>/'+id_req,
+//       url:BASE_URL + 'administrator/requisition/getIngredients_modifier/<?php //echo $this->uri->segment(2)?>/'+id_req,
 //       type:'post',
 //       dataType:'json',
-//       data:{id:id,id_req:id_req, "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"},
+//       data:{id:id,id_req:id_req, "<?php //echo $this->security->get_csrf_token_name(); ?>": "<?php //echo $this->security->get_csrf_hash(); ?>"},
 //       async:true,
 //     })
 //     .done(function(data){
@@ -442,7 +442,7 @@ margin-bottom: 12px;
                 for (var i = 0; i < data.length; i++) {
                 row += `
                 <li style="cursor: pointer;">
-                  <a class="articleOption" id_art="${data[i].ID_ARTICLE }" code_ref="${data[i].CODEBAR_ARTICLE }" nom_art="${data[i].DESIGN_ARTICLE}" prix_unit="${data[i].PRIX_DACHAT_ARTICLE}">${data[i].DESIGN_ARTICLE} : ${data[i].CODEBAR_ARTICLE}}
+                  <a class="articleOption" id_art="${data[i].ID_ARTICLE }" code_ref="${data[i].CODEBAR_ARTICLE }" nom_art="${data[i].DESIGN_ARTICLE}" prix_unit="${data[i].PRIX_DACHAT_ARTICLE}">${data[i].DESIGN_ARTICLE} : ${data[i].CODEBAR_ARTICLE}
                   </a>
                 </li>`;
                 }

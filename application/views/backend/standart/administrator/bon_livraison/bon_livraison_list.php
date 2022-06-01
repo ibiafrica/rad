@@ -230,8 +230,15 @@ jQuery(document).ready(domo);
          // console.log(res.bon_livraison_details)
          let tableBlData = Object.values(res.bon_livraison);
          let tableBlDetail = Object.values(res.bon_livraison_details);
+         let prix = null;
 
          tableBlDetail.forEach(function(item) {
+            // prix = ;
+            if(item.PRIX_TOTAL_BLD == 0){ 
+               prix = "<a href='#' class='btn btn-warning btn-xs'>Quantité insufisante dans le stock</a>"
+            }else{
+               prix = item.PRIX_TOTAL_BLD;
+            }
             total += item.PRIX_TOTAL_BLD;
             tableInner += "<tr>";
             tableInner += "<td class='text-center'>";
@@ -247,7 +254,7 @@ jQuery(document).ready(domo);
             tableInner += item.QUANTITE_BLD;
             tableInner += "</td>";
             tableInner += "<td class='text-center'>";
-            tableInner += item.PRIX_TOTAL_BLD;
+            tableInner += prix;
             tableInner += "</td>";
             tableInner += "</tr>";
          })

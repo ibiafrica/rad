@@ -229,12 +229,14 @@ class Model_registers extends MY_Model
         return ($query) ? true : false;
 
     }
+    
     public function getOne($table, $criteres = array())
     {
         $this->db->where($criteres);
         $query = $this->db->get($table);
         return $query->row();
     }
+
     public function getOneJoin($table, $table1, $criteres1, $table2, $criteres2, $critere=array())
     {
         $this->db->select('comd.*,auth.*,client.*');

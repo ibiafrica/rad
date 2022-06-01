@@ -28,7 +28,7 @@ class Bon_livraison extends Admin
 	*
 	* @var $offset String
 	*/
-	public function index()
+	public function index($offset = 0)
 	{
 		$this->is_allowed('bon_livraison_list');
 
@@ -95,7 +95,7 @@ class Bon_livraison extends Admin
 			$quantite = $this->input->post('quantite');
 			$total = null;
 
-			$code_bl = $this->model_bon_livraison->random_code();
+			$code_bl = $this->model_bon_livraison->random_code();	
 		
 			$bon_livraison = [
 				'CODE_BL' => $code_bl,
@@ -110,6 +110,21 @@ class Bon_livraison extends Admin
 
 			for($i=0; $i<count($code_art); $i++){
 
+				$produit = $this->model_registers->getOne('pos_store_1_ibi_articles', array('DELETE_STATUS_ARTICLE'=> 0, 'CODEBAR_ARTICLE' => $code_art[$i]));
+				$quantite_produit = $produit->QUANTITY_ARTICLE;
+
+				$quantite__ = $quantite[$i];
+
+				if($quantite_produit <= 0 || $quantite__ > $quantite_produit)
+				{
+					$quantite_ = 0;
+				}else{
+					$quantite_ = $quantite[$i];
+					$produit = $this->model_registers->getOne('pos_store_1_ibi_articles', array('DELETE_STATUS_ARTICLE'=> 0, 'CODEBAR_ARTICLE' => $code_art[$i]));
+					$quantite_produit = $produit->QUANTITY_ARTICLE - $quantite_;
+					$new_quant = $this->model_rm->update('pos_store_1_ibi_articles', array('CODEBAR_ARTICLE' => $code_art[$i]), array('QUANTITY_ARTICLE' => $quantite_produit));
+				}
+
 				$bon_livraison_detail[] = [
 					'REF_ID_BL' => $save_bon_livraison,
 					'REF_BON_LIVRAISON' => $code_bl,
@@ -117,20 +132,18 @@ class Bon_livraison extends Admin
 					'NOM_PRODUIT_BLD' => $nom_art[$i],
 					'PRIX_UNITAIRE_BLD' => $prix_unit[$i],
 					'QUANTITE_BLD' => $quantite[$i],
-					'PRIX_TOTAL_BLD' => $prix_unit[$i] * $quantite[$i]
+					'PRIX_TOTAL_BLD' => (int)($prix_unit[$i]) * $quantite_
 				];
 
-				$produit = $this->model_registers->getOne('pos_store_1_ibi_articles', array('DELETE_STATUS_ARTICLE'=> 0, 'CODEBAR_ARTICLE' => $code_art[$i]));
-				$quantite_produit = $produit->QUANTITY_ARTICLE - $quantite[$i];
-
-				$new_quant = $this->model_rm->update('pos_store_1_ibi_articles', array('CODEBAR_ARTICLE' => $code_art[$i]), array('QUANTITY_ARTICLE' => $quantite_produit));
 			}
 
-			// dump($quantite_produit);
+			// dump($bon_livraison_detail);
 			// die;
 			
 			$save_details = $this->model_rm->insertArray('bon_livraison_details', $bon_livraison_detail);
 
+			$save_bon_livraison = true;
+			
 			if ($save_bon_livraison) {
 				
 				set_message(
@@ -237,13 +250,28 @@ class Bon_livraison extends Admin
 
 			$bon_livraison = ['REF_CLIENT_BL' => $id_client,];
 			$ref_bl = ['REF_BON_LIVRAISON' => $code_bl];
-			$where_id = ['ID_BL' => $id];
+			$where_id = ['ID_BL' => $id_bl];
 
-			$save_bon_livraison = $this->model_bon_livraison->change($id_bl, $bon_livraison);
+			$save_bon_livraison = $this->model_rm->update('bon_livraison',$id_bl, $bon_livraison);
 
 			for($i=0; $i<count($code_art); $i++){
 
 				$bl_count = $this->model_registers->record_countsome('bon_livraison_details', array('CODE_PRODUIT_BLD' => $code_art[$i],'NOM_PRODUIT_BLD'=>$nom_art[$i], 'PRIX_UNITAIRE_BLD' => $prix_unit[$i]));
+
+				$produit = $this->model_registers->getOne('pos_store_1_ibi_articles', array('DELETE_STATUS_ARTICLE'=> 0, 'CODEBAR_ARTICLE' => $code_art[$i]));
+				$quantite_produit = $produit->QUANTITY_ARTICLE;
+
+				$quantite__ = $quantite[$i];
+
+				if($quantite_produit <= 0 || $quantite__ > $quantite_produit)
+				{
+					$quantite_ = 0;
+				}else{
+					$quantite_ = $quantite[$i];
+					$produit = $this->model_registers->getOne('pos_store_1_ibi_articles', array('DELETE_STATUS_ARTICLE'=> 0, 'CODEBAR_ARTICLE' => $code_art[$i]));
+					$quantite_produit = $produit->QUANTITY_ARTICLE - $quantite_;
+					$new_quant = $this->model_rm->update('pos_store_1_ibi_articles', array('CODEBAR_ARTICLE' => $code_art[$i]), array('QUANTITY_ARTICLE' => $quantite_produit));
+				}
 
 				if($bl_count < 1)
 				{
@@ -253,14 +281,15 @@ class Bon_livraison extends Admin
 						'NOM_PRODUIT_BLD' => $nom_art[$i],
 						'PRIX_UNITAIRE_BLD' => $prix_unit[$i],
 						'QUANTITE_BLD' => $quantite[$i],
-						'PRIX_TOTAL_BLD' => $prix_unit[$i] * $quantite[$i]
+						'PRIX_TOTAL_BLD' => (int)($prix_unit[$i]) * $quantite_
 					];
 
 					$save_detail = $this->model_rm->insert('bon_livraison_details', $bon_livraison_detail);
+
 				}else{
 					$bon_livraison_detail = [
 						'QUANTITE_BLD' => $quantite[$i],
-						'PRIX_TOTAL_BLD' => $prix_unit[$i] * $quantite[$i]
+						'PRIX_TOTAL_BLD' => (int)($prix_unit[$i]) * $quantite_
 					];
 					
 					$update_bl_detail = $this->model_rm->update('bon_livraison_details', array('CODE_PRODUIT_BLD' => $code_art[$i], 'REF_BON_LIVRAISON' => $code_bl), $bon_livraison_detail);
@@ -400,10 +429,13 @@ class Bon_livraison extends Admin
 		$datasearch = $this->input->post('datasearch');
 
 		// $this->data['getProduits'] = $this->model_rm->getRequeteResult('SELECT * FROM pos_store_1_ibi_articles WHERE DELETE_STATUS_ARTICLE=0 AND DESIGN_ARTICLE LIKE "%'.$datasearch.'%"');
-		$this->data['getProduits'] = $this->model_rm->getRequete("SELECT ID_ARTICLE, CODEBAR_ARTICLE, DESIGN_ARTICLE, PRIX_DACHAT_ARTICLE
-		FROM pos_store_1_ibi_articles  WHERE TYPE_ARTICLE=0 AND DELETE_STATUS_ARTICLE = 0 AND STORE_ID_ARTICLE= 1 
-		AND CODEBAR_ARTICLE NOT IN (SELECT CODE_PRODUIT_BLD FROM bon_livraison_details WHERE REF_ID_BL = $id_bl)
-		");
+		// $this->data['getProduits'] = $this->model_rm->getRequete("SELECT ID_ARTICLE, CODEBAR_ARTICLE, DESIGN_ARTICLE, PRIX_DACHAT_ARTICLE
+		// FROM pos_store_1_ibi_articles  WHERE TYPE_ARTICLE=0 AND DELETE_STATUS_ARTICLE = 0 AND STORE_ID_ARTICLE= 1 
+		// AND CODEBAR_ARTICLE NOT IN (SELECT CODE_PRODUIT_BLD FROM bon_livraison_details WHERE REF_ID_BL = $id_bl)
+		// ");
+
+		$this->data['getProduits'] = $this->model_rm->getRequeteResult("SELECT * FROM pos_store_1_ibi_articles WHERE CODEBAR_ARTICLE NOT IN (SELECT CODE_PRODUIT_BLD FROM bon_livraison_details WHERE REF_ID_BL = $id_bl) AND DELETE_STATUS_ARTICLE=0 AND DESIGN_ARTICLE LIKE '%$datasearch%'");
+		
 
 		// dump($code_bld); die;
 		

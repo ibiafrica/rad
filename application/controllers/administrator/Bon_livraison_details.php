@@ -18,6 +18,7 @@ class Bon_livraison_details extends Admin
 
 		$this->load->model('model_bon_livraison_details');
 		$this->load->model('model_rm');
+		$this->load->model('model_registers');
 	}
 
 	/**
@@ -235,10 +236,12 @@ class Bon_livraison_details extends Admin
 		$arr_id = $this->input->get('id');
 		$remove = false;
 
+		$produit = $this->model_registers->getOne('bon_livraison_details', array('ID_BLD'=>$id));
+		$store_data = $this->model_registers->getOne('pos_store_1_ibi_articles', array('CODEBAR_ARTICLE'=>$produit->CODE_PRODUIT_BLD));
+		$new_stock = $produit->QUANTITE_BLD + $store_data->QUANTITY_ARTICLE;
+		$update_stock = $this->model_registers->update('pos_store_1_ibi_articles', array('CODEBAR_ARTICLE'=>$produit->CODE_PRODUIT_BLD), array('QUANTITY_ARTICLE'=>$new_stock));
+
 		$remove = $this->_remove($id);
-		
-		// dump($remove);
-		// die;	
 
 		if ($remove) {
             set_message(cclang('has_been_deleted', 'bon_livraison_details'), 'success');
