@@ -86,7 +86,7 @@
                                             <tr>
                                                 <td width="30"></td>
                                                 <td width="">Code bon livraison</td>
-                                                <td>Status</td>
+                                                <!-- <td>Status</td> -->
                                                 <td width="">Date creation</td>
                                             </tr>
                                         </thead>

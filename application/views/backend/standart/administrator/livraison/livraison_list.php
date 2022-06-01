@@ -165,7 +165,7 @@ jQuery(document).ready(domo);
       <div class="modal-dialog modal-lg" role="document">
          <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="CodeBarreLabel">Bon livraison</h5>
+            <h5 class="modal-title" id="CodeBarreLabel">Livraison</h5>
                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                </button>
@@ -173,9 +173,9 @@ jQuery(document).ready(domo);
             <div class="modal-body" id="retrieveData">
                <table class="table table-striped table-dark">
                   <thead>
-                     <th class='text-center'>Code bon livraison</th>
+                     <th class='text-center'>Code livraison</th>
                      <th class='text-center'>Client</th>
-                     <th class='text-center'>Status</th>
+                     <!-- <th class='text-center'>Status</th> -->
                      <th class='text-center'>Auteur</th>
                      <th class='text-center'>Date de creation</th>
                      <!-- <th class='text-center'>Status</th> -->
@@ -254,7 +254,7 @@ jQuery(document).ready(domo);
             tableBl += res.livraison.full_name;
             tableBl += "</td>";
             tableBl += "<td class='text-center'>";
-            tableBl += res.livraison.DATE_CREATION_BL;
+            tableBl += res.livraison.DATE_CREATION_LIV;
             tableBl += "</td>";
             // tableBl += "<td class='text-center'>";
             // tableBl += "<a href='#' class='btn btn-warning btn-xs'>En attente</a>";

@@ -70,7 +70,7 @@ class Livraison extends Admin
 	{
 		$id_client = $_POST['id_client'];
 
-		$bon_livraison = $this->model_registers->getList('bon_livraison', array('REF_CLIENT_BL'=>$id_client));
+		$bon_livraison = $this->model_registers->getList('bon_livraison', array('REF_CLIENT_BL'=>$id_client, 'STATUS_BL'=>0));
 		$i=0;
 		$attente = 'En attente';
 		$livrer = 'Livrer';
@@ -94,7 +94,6 @@ class Livraison extends Admin
 			$table['tableau'] .= '<table><tr ref_bl="'.$id_bl.'" id="'.$code_bl.'">
 			   	<td><input type="checkbox" onclick="CheckUncheckOne(this)" id="checkbox'.$id_bl.'" name="rowSelectCheckBox'.$code_bl.'[]" value="'.$code_bl.'"></td>
 			   	<td>'.$code_bl.'</td>
-				<td>'.$status.'</div>
 				<td>'.$date_creation.'</div>
 			</tr></table>
 			';
@@ -142,6 +141,7 @@ class Livraison extends Admin
 
 			
 			$save_livraison = $this->model_rm->insert_last_id('livraison', $save_data);
+			$status = array('STATUS_BL'=>1);
 
 			for($i=0; $i<count($data); $i++)
 			{
@@ -149,6 +149,8 @@ class Livraison extends Admin
 					'REF_ID_L' => $save_livraison,
 					'REF_ID_BL' => $data[$i],
 				];
+
+				$this->model_rm->update('bon_livraison', array('ID_BL' => $data[$i]), $status);
 			}
 
 			$save_details = $this->model_rm->insertArray('livraison_detail', $livraison_detail);

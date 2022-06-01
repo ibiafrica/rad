@@ -178,7 +178,7 @@ jQuery(document).ready(domo);
                   <thead>
                      <th class='text-center'>Code bon livraison</th>
                      <th class='text-center'>Client</th>
-                     <th class='text-center'>Status</th>
+                     <!-- <th class='text-center'>Status</th> -->
                      <th class='text-center'>Auteur</th>
                      <th class='text-center'>Date de creation</th>
                      <!-- <th class='text-center'>Status</th> -->
@@ -206,7 +206,7 @@ jQuery(document).ready(domo);
             </div>
          </div>
       </div>
-   </div>
+</div>
 <!-- /.content -->
 
 <!-- Page script -->
