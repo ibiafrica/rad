@@ -292,7 +292,7 @@ margin-bottom: 12px;
                 for (var i = 0; i < data.length; i++) {
                 row += `
                 <li style="cursor: pointer;">
-                  <a class="articleOption" id_art="${data[i].ID_ARTICLE }" code_ref="${data[i].CODEBAR_ARTICLE }" nom_art="${data[i].DESIGN_ARTICLE}" prix_unit="${data[i].PRIX_DACHAT_ARTICLE}">${data[i].DESIGN_ARTICLE} : ${data[i].CODEBAR_ARTICLE}}
+                  <a class="articleOption" id_art="${data[i].ID_ARTICLE }" code_ref="${data[i].CODEBAR_ARTICLE }" nom_art="${data[i].DESIGN_ARTICLE}" prix_unit="${data[i].PRIX_DACHAT_ARTICLE}">${data[i].DESIGN_ARTICLE} : ${data[i].CODEBAR_ARTICLE}
                   </a>
                 </li>`;
                 }
