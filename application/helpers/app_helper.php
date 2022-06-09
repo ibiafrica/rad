@@ -1518,7 +1518,7 @@ if (!function_exists('settings_address')) {
 	function settings_address()
 	{
 		$ci = &get_instance();
-		$requete = $ci->db->get('settings_app');
+		$requete = $ci->db->get('contribuable');
 		if ($requete->num_rows() > 0) {
 			# code...
 			return $requete->row_array();

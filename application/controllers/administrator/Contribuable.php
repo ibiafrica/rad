@@ -216,6 +216,9 @@ class Contribuable extends Admin
 		$this->form_validation->set_rules('tp_legal_form', 'Forme Juridique', 'trim|required|max_length[20]');
 		
 		if ($this->form_validation->run()) {
+
+			$contribuable_tp_logo_uuid = $this->input->post('contribuable_tp_logo_uuid');
+			$contribuable_tp_logo_name = $this->input->post('contribuable_tp_logo_name');
 		
 			$save_data = [
 				'tp_type' => $this->input->post('tp_type'),
@@ -236,7 +239,30 @@ class Contribuable extends Admin
 				'tp_fiscal_center' => $this->input->post('tp_fiscal_center'),
 				'tp_activity_sector' => $this->input->post('tp_activity_sector'),
 				'tp_legal_form' => $this->input->post('tp_legal_form'),
+				'tp_email' => $this->input->post('email'),
+				'status_tva' => $this->input->post('status_tva'),
 			];
+
+			if (!is_dir(FCPATH . '/uploads/contribuable/')) {
+				mkdir(FCPATH . '/uploads/contribuable/');
+			}
+
+			if (!empty($contribuable_tp_logo_uuid)) {
+				$contribuable_tp_logo_name_copy = date('YmdHis') . '-' . $contribuable_tp_logo_name;
+
+				rename(FCPATH . 'uploads/tmp/' . $contribuable_tp_logo_uuid . '/' . $contribuable_tp_logo_name, 
+						FCPATH . 'uploads/contribuable/' . $contribuable_tp_logo_name_copy);
+
+				if (!is_file(FCPATH . '/uploads/contribuable/' . $contribuable_tp_logo_name_copy)) {
+					echo json_encode([
+						'success' => false,
+						'message' => 'Error uploading file'
+						]);
+					exit;
+				}
+
+				$save_data['tp_logo'] = $contribuable_tp_logo_name_copy;
+			}
 
 			
 			$save_contribuable = $this->model_contribuable->change($id, $save_data);
@@ -332,6 +358,78 @@ class Contribuable extends Admin
 		
 		
 		return $this->model_contribuable->remove($id);
+	}
+
+
+	public function upload_tp_logo_file()
+	{
+		if (!$this->is_allowed('contribuable_add', false)) {
+			echo json_encode([
+				'success' => false,
+				'message' => cclang('sorry_you_do_not_have_permission_to_access')
+				]);
+			exit;
+		}
+
+		$uuid = $this->input->post('qquuid');
+
+		echo $this->upload_file([
+			'uuid' 		 	=> $uuid,
+			'table_name' 	=> 'contribuable',
+		]);
+	}
+
+	/**
+	* Delete Image Settings App	* 
+	* @return JSON
+	*/
+	public function delete_tp_logo_file($uuid)
+	{
+		//print_r($uuid);die;
+		if (!$this->is_allowed('contribuable_delete', false)) {
+			echo json_encode([
+				'success' => false,
+				'error' => cclang('sorry_you_do_not_have_permission_to_access')
+				]);
+			exit;
+		}
+
+		echo $this->delete_file([
+            'uuid'              => $uuid, 
+            'delete_by'         => $this->input->get('by'), 
+            'field_name'        => 'tp_logo', 
+            'upload_path_tmp'   => './uploads/tmp/',
+            'table_name'        => 'contribuable',
+            'primary_key'       => 'id_contribuable',
+            'upload_path'       => 'uploads/contribuable/'
+        ]);
+	}
+
+	/**
+	* Get Image Settings App	* 
+	* @return JSON
+	*/
+	public function get_tp_logo_file($id)
+	{
+		if (!$this->is_allowed('contribuable_update', false)) {
+			echo json_encode([
+				'success' => false,
+				'message' => 'Image not loaded, you do not have permission to access'
+				]);
+			exit;
+		}
+
+		$contribuable = $this->model_contribuable->find($id);
+
+		echo $this->get_file([
+            'uuid'              => $id, 
+            'delete_by'         => 'id', 
+            'field_name'        => 'tp_logo', 
+            'table_name'        => 'contribuable',
+            'primary_key'       => 'id_contribuable',
+            'upload_path'       => 'uploads/contribuable/',
+            'delete_endpoint'   => 'administrator/contribuable/delete_tp_logo_file'
+        ]);
 	}
 	
 	

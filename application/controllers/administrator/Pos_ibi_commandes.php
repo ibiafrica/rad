@@ -37,6 +37,7 @@ class pos_ibi_commandes extends Admin
 		$filter = $this->input->get('q');
 		$field 	= $this->input->get('f');
 		$status 	= $this->input->get('status');
+		$type 	= $this->input->get('type_commande');
 		$shift = $this->input->get('shift');
 
 		if ($shift != '') {
@@ -51,12 +52,12 @@ class pos_ibi_commandes extends Admin
 		$this->data['start'] = $debut;
 		$this->data['end'] = $fin;
 
-		$commandes = $this->model_pos_ibi_commandes->get($debut, $fin, $shift, $filter, $field, $status, 100, $offset);
+		$commandes = $this->model_pos_ibi_commandes->get($debut, $fin, $shift,$type, $filter, $field, $status, 100, $offset);
 		// $commandes = $this->db->select("*")->from("pos_ibi_commandes")->get()->result();
 		// print_r($commandes);
 		// die;
 		// $total_headers = $this->model_pos_ibi_commandes->get_total_header($shift, $filter, $field, $status, 200, $offset);
-		$this->data['pos_ibi_commandes_counts'] = $this->model_pos_ibi_commandes->count_all($debut, $fin, $shift, $filter, $status, $field);
+		$this->data['pos_ibi_commandes_counts'] = $this->model_pos_ibi_commandes->count_all($debut, $fin, $shift,$type, $filter, $status, $field);
 
 		// var_dump($total_headers);
 		// exit;
@@ -67,7 +68,7 @@ class pos_ibi_commandes extends Admin
 			$prods = $this->db->select("*")
 				->from("pos_ibi_commandes_produits cp")
 				->join("pos_ibi_stores st", "st.ID_STORE = cp.STORE_ID_POS_IBI_COMMANDES_PRODUITS")
-				->where("cp.pos_IBI_COMMANDES_ID", $current_c->ID_POS_IBI_COMMANDES)
+				->where("cp.POS_IBI_COMMANDES_ID", $current_c->ID_POS_IBI_COMMANDES)
 				->where("cp.QUANTITE >", 0)
 				->get()->result();
 
@@ -88,51 +89,66 @@ class pos_ibi_commandes extends Admin
 		$this->data['total_somme'] = 0;
 		$config = [
 			'base_url'     => 'administrator/pos_ibi_commandes/index/',
-			'total_rows'   =>  $this->model_pos_ibi_commandes->count_all($debut, $fin, $shift, $filter, $status, $field),
+			'total_rows'   =>  $this->model_pos_ibi_commandes->count_all($debut, $fin, $shift,$type, $filter, $status, $field),
 			'per_page'     => 100,
 			'uri_segment'  => 4,
 		];
 
 		$this->data['clients_list'] = json_encode($this->db->select("NOM_CLIENT, PRENOM, ID_CLIENT")->from("pos_clients")
 			->where("DELETE_STATUS_CLIENT", 0)->get()->result());
-		$this->data['pagination'] = $this->pagination($config);
-		$this->data['params'] = $this->model_rm->getOne("settings_app");
+		if ($type=='') {
+			
+			$this->data['pagination'] = $this->pagination($config);
+		}else{
+			$this->data['pagination'] = '';
+		}
+		
+		$this->data['params'] = $this->model_rm->getOne("contribuable");
 		$this->template->title('Pos Ibi Commandes List');
+		// dump($this->data);die;
 		$this->render('backend/standart/administrator/pos_ibi_commandes/pos_ibi_commandes_list', $this->data);
 	}
 
 
-	public function factures_journaliere($id)
+	public function sendFacturesJournaliere($id)
 	{
 
-		$req = $this->db->query('SELECT * FROM contribuable');
+		$credentials = $this->db->query("SELECT username,password FROM contribuable")->row();
+
+        $credentials->password = htmlspecialchars($credentials->password);
+
+        $req = $this->db->query('SELECT * FROM contribuable');
+
+        $tva=0;
+
+		 if ($req->num_rows() >0) {
+        
+        $tva = $req->row()->vat_taxpayer;
+        $tpp = new stdClass;
+        $tpp->tp_type = $req->row()->tp_type;
+        $tpp->tp_name = $req->row()->tp_name;
+        $tpp->tp_TIN = $req->row()->tp_TIN;
+        $tpp->tp_trade_number = $req->row()->tp_trade_number;
+        $tpp->tp_postal_number = $req->row()->tp_postal_number;
+        $tpp->tp_phone_number = $req->row()->tp_phone_number;
+        $tpp->tp_address_province = $req->row()->tp_address_province;
+        $tpp->tp_address_commune = $req->row()->tp_address_commune;
+        $tpp->tp_address_quartier = $req->row()->tp_address_quartier;
+        $tpp->tp_address_avenue = $req->row()->tp_address_avenue;
+        $tpp->tp_address_rue = $req->row()->tp_address_rue;
+        $tpp->tp_address_number = $req->row()->tp_address_number;
+        $tpp->vat_taxpayer = $req->row()->vat_taxpayer;
+        $tpp->ct_taxpayer = $req->row()->ct_taxpayer;
+        $tpp->tl_taxpayer = $req->row()->tl_taxpayer;
+        $tpp->tp_fiscal_center = $req->row()->tp_fiscal_center;
+        $tpp->tp_activity_sector = $req->row()->tp_activity_sector;
+        $tpp->tp_legal_form = $req->row()->tp_legal_form;
+    }
+		$resquest = $this->db->query("SELECT pro.TVA,p.ID_POS_IBI_COMMANDES, p.CODE AS Invoice_Number,pro.NAME_PRODUIT AS NOM_ARTICLE, pro.QUANTITE AS QUANTITE, pro.PRIX_VENDU AS P_U,'0' AS Item_CT, '0' AS Item_TL, (pro.QUANTITE*(pro.PRIX_VENDU-(pro.PRIX_VENDU - (pro.PRIX_VENDU/pro.TVA)))) AS Item_Price_NVAT, (pro.PRIX_VENDU - (pro.PRIX_VENDU/pro.TVA)) AS TVA,(pro.QUANTITE*pro.PRIX_VENDU) AS Item_Price_WVAT,(pro.QUANTITE*pro.PRIX_VENDU) AS Item_Total_Amount
+		FROM pos_ibi_commandes p INNER JOIN pos_ibi_commandes_produits pro ON p.CODE=pro.REF_COMMAND_CODE WHERE pro.DELETED_STATUS_POS_IBI_COMMANDES_PRODUITS=0 AND p.ID_POS_IBI_COMMANDES ='" . $id . "'");
 
 
-		$tpp = new stdClass;
-		$tpp->tp_type = $req->row()->tp_type;
-		$tpp->tp_name = $req->row()->tp_name;
-		$tpp->tp_TIN = $req->row()->tp_TIN;
-		$tpp->tp_trade_number = $req->row()->tp_trade_number;
-		$tpp->tp_postal_number = $req->row()->tp_postal_number;
-		$tpp->tp_phone_number = $req->row()->tp_phone_number;
-		$tpp->tp_adress_province = $req->row()->tp_address_province;
-		$tpp->tp_adress_commune = $req->row()->tp_address_commune;
-		$tpp->tp_adress_quartier = $req->row()->tp_address_quartier;
-		$tpp->tp_adress_avenue = $req->row()->tp_address_avenue;
-		$tpp->tp_adress_rue = $req->row()->tp_address_rue;
-		$tpp->tp_adress_number = $req->row()->tp_address_number;
-		$tpp->vat_taxpayer = $req->row()->vat_taxpayer;
-		$tpp->ct_taxpayer = $req->row()->ct_taxpayer;
-		$tpp->tl_taxpayer = $req->row()->tl_taxpayer;
-		$tpp->tp_fiscal_center = $req->row()->tp_fiscal_center;
-		$tpp->tp_activity_sector = $req->row()->tp_activity_sector;
-		$tpp->tp_legal_form = $req->row()->tp_legal_form;
-
-		$resquest = $this->db->query("SELECT pro.TVA,p.ID_POS_IBI_COMMANDES, p.CODE AS Invoice_Number,pro.NAME AS NOM_ARTICLE, pro.QUANTITE AS QUANTITE, pro.PRIX_VENDU AS P_U,'0' AS Item_CT, '0' AS Item_TL, (pro.QUANTITE*(pro.PRIX_VENDU-(pro.PRIX_VENDU - (pro.PRIX_VENDU/pro.TVA)))) AS Item_Price_NVAT, (pro.PRIX_VENDU - (pro.PRIX_VENDU/pro.TVA)) AS TVA,(pro.QUANTITE*pro.PRIX_VENDU) AS Item_Price_WVAT,(pro.QUANTITE*pro.PRIX_VENDU) AS Item_Total_Amount
-		FROM pos_ibi_commandes p INNER JOIN pos_ibi_commandes_produits pro ON p.CODE=pro.REF_COMMAND_CODE WHERE pro.DELETED_STATUS_POS_IBI_COMMANDES_PRODUITS=0 AND p.ID_POS_IBI_COMMANDES ='" . $id . "'  ORDER BY p.CODE");
-
-
-		$resquests = $this->db->query("SELECT p.ID_POS_IBI_COMMANDES,cl.ID_CLIENT, p.CODE AS invoice_number,p.DATE_CREATION_POS_IBI_COMMANDES AS invoice_date, concat(cl.NOM_CLIENT,' ',cl.PRENOM)AS customer_name, cl.NIF_CLIENT AS customer_TIN,cl.ADRESSE_CLIENT AS customer_address,' - ' AS Payment_Type,if(cl.AVEC_TVA=0,'NON','OUI') AS vat_customer_payer,'-' AS invoice_type,'-' AS cancelled_invoice_ref,'-' AS invoice_signature,'-' AS invoice_signature_date
+		$resquests = $this->db->query("SELECT p.ID_POS_IBI_COMMANDES,cl.ID_CLIENT, p.CODE AS invoice_number,p.DATE_CREATION_POS_IBI_COMMANDES AS invoice_date, concat(cl.NOM_CLIENT,' ',cl.PRENOM)AS customer_name, cl.NIF_CLIENT AS customer_TIN,cl.ADRESSE_CLIENT AS customer_address,'' AS Payment_Type,if(cl.AVEC_TVA=0,'0','1') AS vat_customer_payer,'-' AS invoice_type,'' AS cancelled_invoice_ref,p.DATE_CREATION_POS_IBI_COMMANDES AS invoice_signature_date
 		FROM pos_ibi_commandes p INNER JOIN  pos_clients cl ON cl.ID_CLIENT=p.CLIENT_ID_COMMANDE WHERE p.ID_POS_IBI_COMMANDES  ='" . $id . "'  GROUP BY p.CODE ")->result();
 
 		//dd($resquest->result());die;
@@ -167,23 +183,172 @@ class pos_ibi_commandes extends Admin
 
 		foreach ($resquests as $key => $value) {
 			if (isset($obj[$value->invoice_number])) {
-				// 'tp_type'->$obj[$tp_type];
-				$value->invoices_item = $obj[$value->invoice_number];
-				$values = (object) array_merge((array) $tpp, (array) $value);
-				array_push($clientObject, $values);
-				// $value = $values;
+				$datas = new stdClass;
+            // 'tp_type'->$obj[$tp_type];
+             $date_range = new DateTime($value->invoice_date);
+
+             $signature = $req->row()->tp_TIN . '/' . $credentials->username . '/' . $date_range->format('YmdHis') . '/' . $value->invoice_number;
+             $datas->invoice_number = $value->invoice_number;
+             $datas->invoice_date = $value->invoice_date;
+             $datas->customer_name = $value->customer_name;
+             $datas->customer_TIN = $value->customer_TIN;
+             $datas->custom_address = $value->customer_address;
+             $datas->vat_customer_payer = '0';
+             $datas->payment_type = $value->Payment_Type;
+
+             $datas->cancelled_invoice_ref = $value->cancelled_invoice_ref;
+
+             $datas->invoice_signature = $signature;
+
+             $datas->invoice_signature_date = $value->invoice_date;
+             
+             $datas->invoice_items = $obj[$value->invoice_number];
+
+            $values = (object) array_merge((array) $tpp, (array) $datas);
+            array_push($clientObject, $values);
 			}
 		}
 
 
-		$this->data['commandProduct'] = $obj;
-		$this->data['commandClient'] = $clientObject;
-
-		// echo "<pre>";print_r($this->data['commandProduct']);
-
-		echo "<pre>";
-		print_r($clientObject);
+		    $login = new stdClass;
+            $login->username = $credentials->username;
+            $login->password = $credentials->password;
+            $sendFacture = ['all_data' => array_values($clientObject), 'loginData' => $login];
+    
+   
+        return $sendFacture;
 	}
+
+
+    public function multiSend()
+    {
+
+
+        $credentials = $this->db->query("SELECT username,password FROM `contribuable`")->row();
+
+        $credentials->password = htmlspecialchars($credentials->password);
+
+         $results = $this->db->query("SELECT * FROM pos_ibi_commandes WHERE SYNC_OBR = 0 ORDER BY DATE_CREATION_POS_IBI_COMMANDES DESC LIMIT 50")->result();
+
+
+        $num = 1;
+        $str = '';
+        foreach ($results as $value) {
+            if(count($results)==$num){
+                $str.=$value->ID_POS_IBI_COMMANDES;
+
+            }
+            else{
+                $str.=$value->ID_POS_IBI_COMMANDES.',';
+            }
+            $num+=1;
+        }
+
+
+        $facture_listes_obr = "(" .$str.")";
+
+       // print_r($facture_listes_obr);exit;
+
+        $contribuable = $this->db->query('SELECT * FROM contribuable');
+
+        $tpp = new stdClass;
+        $tpp->tp_type =$contribuable->row()->tp_type;
+        $tpp->tp_name = $contribuable->row()->tp_name;
+        $tpp->tp_TIN = $contribuable->row()->tp_TIN;
+        $tpp->tp_trade_number = $contribuable->row()->tp_trade_number;
+        $tpp->tp_postal_number = $contribuable->row()->tp_postal_number;
+        $tpp->tp_phone_number = $contribuable->row()->tp_phone_number;
+        $tpp->tp_address_province = $contribuable->row()->tp_address_province;
+        $tpp->tp_address_commune = $contribuable->row()->tp_address_commune;
+        $tpp->tp_address_quartier = $contribuable->row()->tp_address_quartier;
+        $tpp->tp_address_avenue = $contribuable->row()->tp_address_avenue;
+        $tpp->tp_address_rue = $contribuable->row()->tp_address_rue;
+        $tpp->tp_address_number = $contribuable->row()->tp_address_number;
+        $tpp->vat_taxpayer = $contribuable->row()->vat_taxpayer;
+        $tpp->ct_taxpayer = $contribuable->row()->ct_taxpayer;
+        $tpp->tl_taxpayer = $contribuable->row()->tl_taxpayer;
+        $tpp->tp_fiscal_center = $contribuable->row()->tp_fiscal_center;
+        $tpp->tp_activity_sector = $contribuable->row()->tp_activity_sector;
+        $tpp->tp_legal_form = $contribuable->row()->tp_legal_form;
+
+
+
+        $resquest = $this->db->query("SELECT pro.TVA,p.ID_POS_IBI_COMMANDES, p.CODE AS Invoice_Number,pro.NAME_PRODUIT AS NOM_ARTICLE, pro.QUANTITE AS QUANTITE, pro.PRIX_VENDU AS P_U,'0' AS Item_CT, '0' AS Item_TL, (pro.QUANTITE*(pro.PRIX_VENDU-(pro.PRIX_VENDU - (pro.PRIX_VENDU/pro.TVA)))) AS Item_Price_NVAT, (pro.PRIX_VENDU - (pro.PRIX_VENDU/pro.TVA)) AS TVA,(pro.QUANTITE*pro.PRIX_VENDU) AS Item_Price_WVAT,(pro.QUANTITE*pro.PRIX_VENDU) AS Item_Total_Amount
+		FROM pos_ibi_commandes p INNER JOIN pos_ibi_commandes_produits pro ON p.CODE=pro.REF_COMMAND_CODE WHERE pro.DELETED_STATUS_POS_IBI_COMMANDES_PRODUITS=0 AND p.ID_POS_IBI_COMMANDES IN ".$facture_listes_obr."  ORDER BY p.CODE")->result();
+
+        $resquests = $this->db->query("SELECT p.ID_POS_IBI_COMMANDES,cl.ID_CLIENT, p.CODE AS invoice_number,p.DATE_CREATION_POS_IBI_COMMANDES AS invoice_date, concat(cl.NOM_CLIENT,' ',cl.PRENOM)AS customer_name, cl.NIF_CLIENT AS customer_TIN,cl.ADRESSE_CLIENT AS customer_address,'' AS Payment_Type,if(cl.AVEC_TVA=0,'0','1') AS vat_customer_payer,'-' AS invoice_type,'' AS cancelled_invoice_ref,p.DATE_CREATION_POS_IBI_COMMANDES AS invoice_signature_date
+		FROM pos_ibi_commandes p INNER JOIN  pos_clients cl ON cl.ID_CLIENT=p.CLIENT_ID_COMMANDE WHERE p.ID_POS_IBI_COMMANDES IN ".$facture_listes_obr."  ORDER BY p.CODE")->result();
+
+
+        //dd($resquests->result());die;
+
+        $dataObject=[];
+        $clientObject=[];
+        $obj=[];
+
+        foreach ($resquest as $key) {
+            
+            $commandeData = $key->ID_POS_IBI_COMMANDES > 0 ?  $key->Invoice_Number : "";
+            
+            if (!isset($obj[$commandeData][$key->NOM_ARTICLE])) {
+                $dataaa = new stdClass;
+                $dataaa->item_designation = $key->NOM_ARTICLE;
+                $dataaa->item_quantity = $key->QUANTITE;
+                $dataaa->item_price = $key->P_U;
+                $dataaa->item_ct = $key->Item_CT;
+                $dataaa->item_tl = $key->Item_TL;
+                $dataaa->item_price_nvat = $key->Item_Price_NVAT;
+                $dataaa->vat = $key->TVA;
+                $dataaa->item_price_wvat = $key->Item_Price_WVAT;
+                $dataaa->item_total_amount = $key->Item_Total_Amount;
+                if(!isset($obj[$commandeData])) {
+                    $obj[$commandeData] = [];
+                }
+                array_push($obj[$commandeData], $dataaa);
+            }
+        
+    }
+    
+    foreach ($resquests as $key => $value) {
+        if(isset($obj[$value->invoice_number])) {
+            // 'tp_type'->$obj[$tp_type];
+
+            $datas = new stdClass;
+            // 'tp_type'->$obj[$tp_type];
+             $date_range = new DateTime($value->invoice_date);
+
+             $signature = $contribuable->row()->tp_TIN . '/' . $credentials->username . '/' . $date_range->format('YmdHis') . '/' . $value->invoice_number;
+             $datas->invoice_number = $value->invoice_number;
+             $datas->invoice_date = $value->invoice_date;
+             $datas->customer_name = $value->customer_name;
+             $datas->customer_TIN = $value->customer_TIN;
+             $datas->custom_address = $value->customer_address;
+             $datas->vat_customer_payer = '0';
+             $datas->payment_type = $value->Payment_Type;
+
+             $datas->cancelled_invoice_ref = $value->cancelled_invoice_ref;
+
+             $datas->invoice_signature = $signature;
+
+             $datas->invoice_signature_date = $value->invoice_date;
+             
+             $datas->invoice_items = $obj[$value->invoice_number];
+            
+            $values = (object) array_merge((array) $tpp, (array) $datas);
+            array_push($clientObject, $values);
+            // $value = $values;
+        }
+    }
+
+            $login = new stdClass;
+            $login->username = $credentials->username;
+            $login->password = $credentials->password;
+            $out = ['all_data' => array_values($clientObject), 'loginData' => $login];
+
+        //echo "<pre>";print_r($out);die;
+
+        echo json_encode($out);
+    }
 
 
 
@@ -192,7 +357,7 @@ class pos_ibi_commandes extends Admin
 		
 
 		$request = $this->db->query('SELECT CP.STORE_ID_POS_IBI_COMMANDES_PRODUITS,CP.REF_COMMAND_CODE,CP.REF_PRODUCT_CODEBAR,CP.SHIFT_ID,CP.QUANTITE,CP.PRIX_VENDU,CP.PRIX_TOTAL,CP.DATE_CREATION_POS_IBI_COMMANDES_PRODUITS,C.CREATED_BY_POS_IBI_COMMANDES FROM pos_ibi_commandes_produits CP,pos_ibi_commandes C
-		 WHERE C.ID_POS_IBI_COMMANDES=CP.pos_IBI_COMMANDES_ID AND CP.STORE_ID_POS_IBI_COMMANDES_PRODUITS >0')->result();
+		 WHERE C.ID_POS_IBI_COMMANDES=CP.POS_IBI_COMMANDES_ID AND CP.STORE_ID_POS_IBI_COMMANDES_PRODUITS >0')->result();
 
 		foreach ($request as $key) {
 			
@@ -238,7 +403,7 @@ class pos_ibi_commandes extends Admin
 
 		$this->data['clients'] = $this->db->get_where('pos_clients', array('ID_CLIENT' => $this->data['commande']['CLIENT_ID_COMMANDE']))->row();
 
-		$this->data['info'] = $this->model_rm->getOne('settings_app');
+		$this->data['info'] = $this->model_rm->getOne('contribuable');
 
 		$this->template->title('Pos Ibi Commandes Update');
 		$this->render('backend/standart/administrator/pos_ibi_commandes/facture_view', $this->data);
@@ -291,7 +456,7 @@ class pos_ibi_commandes extends Admin
 			$prods = $this->db->select("*")
 				->from("pos_ibi_commandes_produits cp")
 				->join("pos_ibi_stores st", "st.ID_STORE = cp.STORE_ID_POS_IBI_COMMANDES_PRODUITS")
-				->where("cp.pos_IBI_COMMANDES_ID", $current_c->ID_POS_IBI_COMMANDES)
+				->where("cp.POS_IBI_COMMANDES_ID", $current_c->ID_POS_IBI_COMMANDES)
 				->where("cp.QUANTITE >", 0)
 				->get()->result();
 
@@ -345,7 +510,7 @@ class pos_ibi_commandes extends Admin
 			$prods = $this->db->select("*")
 				->from("pos_ibi_commandes_produits cp")
 				->join("pos_ibi_stores st", "st.ID_STORE = cp.STORE_ID_POS_IBI_COMMANDES_PRODUITS")
-				->where("cp.pos_IBI_COMMANDES_ID", $current_c->ID_POS_IBI_COMMANDES)
+				->where("cp.POS_IBI_COMMANDES_ID", $current_c->ID_POS_IBI_COMMANDES)
 				->where("cp.QUANTITE >", 0)
 				->get()->result();
 
@@ -410,7 +575,7 @@ class pos_ibi_commandes extends Admin
 	public function facture_remise()
 	{
 		$id_commande = $this->uri->segment(4);
-		$data = $this->db->get_where('pos_ibi_commandes_produits', array('pos_IBI_COMMANDES_ID' => $id_commande))->result();
+		$data = $this->db->get_where('pos_ibi_commandes_produits', array('POS_IBI_COMMANDES_ID' => $id_commande))->result();
 		$this->data['produits'] = $data;
 
 		$this->template->title('Pos Ibi Commandes List');
@@ -422,7 +587,7 @@ class pos_ibi_commandes extends Admin
 	public function update_montant_du()
 	{
 
-		$req = $this->db->query('SELECT SUM(pro.PRIX_TOTAL) AS MONTANT,p.ID_POS_IBI_COMMANDES FROM pos_ibi_commandes_produits pro,pos_ibi_commandes p WHERE p.ID_POS_IBI_COMMANDES=pro.POS_IBI_COMMANDES_ID AND  p.DATE_CREATION_POS_IBI_COMMANDES >="2021-09-02 08:20:06" AND (p.COMMANDE_STATUS = 10 OR p.COMMANDE_STATUS = 11) GROUP BY pro.pos_IBI_COMMANDES_ID');
+		$req = $this->db->query('SELECT SUM(pro.PRIX_TOTAL) AS MONTANT,p.ID_POS_IBI_COMMANDES FROM pos_ibi_commandes_produits pro,pos_ibi_commandes p WHERE p.ID_POS_IBI_COMMANDES=pro.POS_IBI_COMMANDES_ID AND  p.DATE_CREATION_POS_IBI_COMMANDES >="2021-09-02 08:20:06" AND (p.COMMANDE_STATUS = 10 OR p.COMMANDE_STATUS = 11) GROUP BY pro.POS_IBI_COMMANDES_ID');
 
 		foreach ($req->result() as $key) {
 
@@ -514,10 +679,10 @@ class pos_ibi_commandes extends Admin
 	public function transfer_command($client_id, $cmd_id)
 	{
 		$update_service = array(
-			'TO_WHOM' => 1,
+			
 			'DATE_MOD_POS_IBI_COMMANDES' => date('Y-m-d H:i:s'),
 			'CLIENT_ID_COMMANDE' => $client_id,
-			'CLIENT_FILE_ID_POS_IBI_COMMANDES' => $client_id
+			
 		);
 
 		$update = $this->db->update("pos_ibi_commandes", $update_service, array("ID_POS_IBI_COMMANDES" => $cmd_id));
@@ -604,57 +769,6 @@ class pos_ibi_commandes extends Admin
 		echo json_encode($this->data);
 	}
 
-	/**
-	 * delete Pos Ibi Commandess
-	 *
-	 * @var $id String
-	 */
-
-
-	// public function delete_cmd($store, $id = null, $zero = 1)
-	// {
-	// 	if ($zero == 0) {
-	// 		// $this->is_allowed('hospital_ibi_articles_delete');
-
-	// 		$this->load->helper('file');
-
-	// 		$arr_id = $this->input->get('id');
-	// 		$remove = false;
-	// 		$inputValue = $this->input->post('inputValue');
-	// 		$remove = $this->db->query('update hospital_ibi_commandes set DELETED_STATUS_HOSPITAL_IBI_COMMANDES=1,DELETED_COMMENT_HOSPITAL_IBI_COMMANDES="' . $inputValue . '",DELETED_USER_HOSPITAL_IBI_COMMANDES=' . get_user_data('id') . ',DELETED_DATE_HOSPITAL_IBI_COMMANDES="' . date('Y-m-d H:i:s') . '" where ID_HOSPITAL_IBI_COMMANDES=' . $id . ' and STORE_ID_COMMADES =' . $store);
-
-	// 		if ($remove) {
-	// 			$order = $this->db->select('*')->from('hospital_ibi_commandes')
-	// 				->where('ID_HOSPITAL_IBI_COMMANDES', $id)
-	// 				->where('STORE_ID_COMMADES', $store)
-	// 				->get()->result()[0];
-
-	// 			$products = $this->db->select('*')->from('hospital_ibi_commandes_produits')
-	// 				->where('HOSPITAL_IBI_COMMANDES_ID', $id)
-	// 				->where('STORE_ID_HOSPITAL_IBI_COMMANDES_PRODUITS', $store)
-	// 				->get()->result();
-	// 			if (sizeof($products) > 0) {
-	// 				for ($rr = 0; $rr < sizeof($products); $rr++) {
-	// 					$myitem = $products[$rr];
-	// 					$table_article = "hospital_store" . "_" . $store . "_ibi_articles";
-	// 					$table_article_flow = "hospital_store" . "_" . $store . "_ibi_articles_stock_flow";
-	// 					$connected_user = get_user_data('id');
-	// 					$total_with_discount = $myitem->PRIX_TOTAL - (($myitem->DISCOUNT_PERCENT * $myitem->PRIX_TOTAL) / 100);
-	// 					$this->adjustStockFlow($table_article, $myitem, $order, $connected_user, $table_article_flow, $total_with_discount, "delete_in");
-	// 				}
-	// 				$this->db->query('update hospital_ibi_commandes_produits set DELETED_STATUS_HOSPITAL_IBI_COMMANDES_PRODUITS=1, DELETED_COMMENT_HOSPITAL_IBI_COMMANDES_PRODUITS ="cfr command comment",DELETED_USER_HOSPITAL_IBI_COMMANDES_PRODUITS=' . get_user_data('id') . ',DELETED_DATE_HOSPITAL_IBI_COMMANDES_PRODUITS="' . date('Y-m-d H:i:s') . '" where HOSPITAL_IBI_COMMANDES_ID=' . $id . ' and STORE_ID_HOSPITAL_IBI_COMMANDES_PRODUITS =' . $store);
-	// 			}
-
-	// 			set_message(cclang('has_been_deleted', 'articles'), 'success');
-	// 		}
-
-	// 		echo json_encode(array("done" => true));
-	// 		exit;
-	// 	} else {
-	// 		set_message(cclang('error_delete', 'articles'), 'error');
-	// 		redirect(base_url('pointdesventes/') . $store . "/commandes");
-	// 	}
-	// }
 
 
 	public function detail_commandes()
@@ -716,7 +830,7 @@ class pos_ibi_commandes extends Admin
 		$id_paiement = $this->input->post('id_paiement');
 		$montant_paiement = $this->input->post('montant_paiement');
 
-		$get_command = $this->db->query("SELECT SUM(PRIX_VENDU*QUANTITE) AS MONTANT_COMMAND FROM pos_ibi_commandes_produits WHERE pos_IBI_COMMANDES_ID = '" . $id_command . "' ")->row_array();
+		$get_command = $this->db->query("SELECT SUM(PRIX_VENDU*QUANTITE) AS MONTANT_COMMAND FROM pos_ibi_commandes_produits WHERE POS_IBI_COMMANDES_ID = '" . $id_command . "' ")->row_array();
 
 		$get_paiement = $this->db->query("SELECT SUM(MONTANT_PAIEMENT) AS MONTANT_PAIEMENT FROM pos_paiements WHERE COMMANDE_ID = '" . $id_command . "' AND STATUT_ANNULATION = 0 ")->row_array();
 
@@ -773,23 +887,6 @@ class pos_ibi_commandes extends Admin
 	}
 
 
-	// private function _remove($id, $commentValue)
-	// {
-	// 	$pos_ibi_commandes = $this->model_pos_ibi_commandes->find($id);
-
-
-
-	// 	$delete_save = array(
-	// 		'DELETED_STATUS_' => 1,
-	// 		'DELETED_DATE_' => date('Y-m-d H:i:s'),
-	// 		'DELETED_USER_' => get_user_data('id'),
-	// 		'DELETED_COMMENT_' => $commentValue
-	// 	);
-
-	// 	$remove = $this->db->update("pos_ibi_commandes", $delete_save, array("ID_pos_IBI_COMMANDES" => $id));
-	// 	return $remove;
-	// }
-
 
 	/**
 	 * Export to excel
@@ -830,7 +927,7 @@ class pos_ibi_commandes extends Admin
 		$ID_CMD = $this->input->post('id_commande');
 		$GET_CMD = $this->db->query("SELECT * FROM pos_ibi_commandes WHERE ID_POS_IBI_COMMANDES =" . $ID_CMD . "  ")->row_array();
 
-		$GET_CMD_PRODUCT = $this->db->query("SELECT SUM(PRIX_TOTAL) AS TOTAL_COMMANDE FROM pos_ibi_commandes_produits WHERE pos_IBI_COMMANDES_ID =" . $ID_CMD . "  ")->row_array()['TOTAL_COMMANDE'];
+		$GET_CMD_PRODUCT = $this->db->query("SELECT SUM(PRIX_TOTAL) AS TOTAL_COMMANDE FROM pos_ibi_commandes_produits WHERE POS_IBI_COMMANDES_ID =" . $ID_CMD . "  ")->row_array()['TOTAL_COMMANDE'];
 
 
 		$year = date("Y");

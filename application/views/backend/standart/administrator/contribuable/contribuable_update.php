@@ -1,4 +1,19 @@
 
+
+<!-- Fine Uploader Gallery CSS file
+
+    ====================================================================== -->
+
+<link href="<?= BASE_ASSET; ?>/fine-upload/fine-uploader-gallery.min.css" rel="stylesheet">
+
+<!-- Fine Uploader jQuery JS file
+
+    ====================================================================== -->
+
+<script src="<?= BASE_ASSET; ?>/fine-upload/jquery.fine-uploader.js"></script>
+
+<?php $this->load->view('core_template/fine_upload'); ?>
+
 <script src="<?= BASE_ASSET; ?>/js/jquery.hotkeys.js"></script>
 <script type="text/javascript">
     function domo(){
@@ -54,8 +69,36 @@
                          
                         <div class="container">
                             <div class="row">
+
+                                <div class="col-md-12">
+
+
+
+                                    <div class="form-group ">
+
+                            <label for="tp_logo" class="col-sm-1">Logo 
+
+                            </label>
+
+                            <div class="col-sm-9">
+
+                                <div id="contribuable_tp_logo_galery"></div>
+
+                                <input class="data_file data_file_uuid" name="contribuable_tp_logo_uuid" id="contribuable_tp_logo_uuid" type="hidden" value="<?= set_value('contribuable_tp_logo_uuid'); ?>">
+
+                                <input class="data_file" name="contribuable_tp_logo_name" id="contribuable_tp_logo_name" type="hidden" value="<?= set_value('contribuable_tp_logo_name', $contribuable->tp_logo); ?>">
+
+                               
+
+                                </div>
+
+                               </div>
+
+                            </div>
                                 <div class="col-md-6 col-sm-12" style="padding-right: 5rem;">
                                 <div class="card" style="width: 100%;">
+
+
                                     <div class="card-header text-center" style="background-color: whitesmoke; padding: 0.1rem;">
                                         <h4 class="text-bold">Presentation</h4>
                                     </div>
@@ -87,6 +130,21 @@
                                             <label for="tp_trade_number">Numero du registre</label>
                                             <input type="text" name="tp_trade_number" id="tp_trade_number" class="form-control" value="<?= $contribuable->tp_trade_number ?>" />
                                         </div>
+
+                                        <div class="form-group">
+                                    <label for="tp_trade_number">Etat TVA</label>
+
+                                    <select  class="form-control chosen chosen-select" name="status_tva" id="status_tva" data-placeholder="Select TYPE TVA" >
+
+                                    <option value=""></option>
+
+                                    <option <?= $contribuable->status_tva == "0" ? 'selected' :''; ?> value="0">TVA Inclus</option>
+
+                                    <option <?= $contribuable->status_tva == "1" ? 'selected' :''; ?> value="1">TVA Exclus</option>
+
+                                    </select>
+                                    
+                                 </div>
                                     </div>
                                 </div>
                                 </div>
@@ -120,6 +178,11 @@
                                             <label for="tp_address_number">Numero de la maison</label>
                                             <input type="text" name="tp_address_number" id="tp_address_number" class="form-control" value="<?= $contribuable->tp_address_number ?>" />
                                         </div>
+
+                                        <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="text" name="email" id="email" class="form-control" value="<?= $contribuable->tp_email ?>" />
+                                 </div>
                                     </div>
                                 </div>
                                 </div>
@@ -270,6 +333,113 @@
     
         return false;
       }); /*end btn save*/
+
+
+      var params = {};
+
+       params[csrf] = token;
+
+
+
+       $('#contribuable_tp_logo_galery').fineUploader({
+
+          template: 'qq-template-gallery',
+
+          request: {
+
+              endpoint: BASE_URL + '/administrator/contribuable/upload_tp_logo_file',
+
+              params : params
+
+          },
+
+          deleteFile: {
+
+              enabled: true, // defaults to false
+
+              endpoint: BASE_URL + '/administrator/contribuable/delete_tp_logo_file'
+
+          },
+
+          thumbnails: {
+
+              placeholders: {
+
+                  waitingPath: BASE_URL + '/asset/fine-upload/placeholders/waiting-generic.png',
+
+                  notAvailablePath: BASE_URL + '/asset/fine-upload/placeholders/not_available-generic.png'
+
+              }
+
+          },
+
+           session : {
+
+             endpoint: BASE_URL + 'administrator/contribuable/get_tp_logo_file/<?= $contribuable->id_contribuable; ?>',
+
+             refreshOnRequest:true
+
+           },
+
+          multiple : false,
+
+          validation: {
+
+              allowedExtensions: ["*"],
+
+              sizeLimit : 0,
+
+                        },
+
+          showMessage: function(msg) {
+
+              toastr['error'](msg);
+
+          },
+
+          callbacks: {
+
+              onComplete : function(id, name, xhr) {
+
+                if (xhr.success) {
+
+                   var uuid = $('#contribuable_tp_logo_galery').fineUploader('getUuid', id);
+
+                   $('#contribuable_tp_logo_uuid').val(uuid);
+
+                   $('#contribuable_tp_logo_name').val(xhr.uploadName);
+
+                } else {
+
+                   toastr['error'](xhr.error);
+
+                }
+
+              },
+
+              onSubmit : function(id, name) {
+
+                  var uuid = $('#contribuable_tp_logo_uuid').val();
+
+                  $.get(BASE_URL + '/administrator/contribuable/delete_tp_logo_file/' + uuid);
+
+              },
+
+              onDeleteComplete : function(id, xhr, isError) {
+
+                if (isError == false) {
+
+                  $('#contribuable_tp_logo_uuid').val('');
+
+                  $('#contribuable_tp_logo_name').val('');
+
+                }
+
+              }
+
+          }
+
+      }); /*end LOGO_ENTREPRISE galey*/
       
        
        

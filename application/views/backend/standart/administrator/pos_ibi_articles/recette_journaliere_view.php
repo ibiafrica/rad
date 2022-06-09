@@ -163,11 +163,11 @@
         var printContents = document.getElementById(divName).innerHTML;
         var originalContents = document.body.innerHTML;
         const entete =`<div style="margin-bottom: 3rem"><strong>
-        <?php echo settings_address()['NOM_ENTREPRISE']; ?><br/>
-        NIF: <?php echo settings_address()['NIF_ENTREPRISE']; ?><br/>
-        RC: <?php echo settings_address()['RC_ENTREPRISE']; ?><br/>
-        Commune: <?php echo settings_address()['COMMUNE_ENTREPRISE']; ?><br/>
-        Quartier:<?php echo settings_address()['QUARTIER_ENTREPRISE'] . ' ,' . '  ' .  settings_address()['AVENUE_ENTREPRISE']; ?></div>`
+        <?php echo settings_address()['tp_name']; ?><br/>
+        NIF: <?php echo settings_address()['tp_TIN']; ?><br/>
+        RC: <?php echo settings_address()['tp_trade_number']; ?><br/>
+        Commune: <?php echo settings_address()['tp_address_commune']; ?><br/>
+        Quartier:<?php echo settings_address()['tp_address_quartier'] . ' ,' . '  ' .  settings_address()['tp_address_avenue']; ?></div>`
         const header = $("#header").html();
         document.body.innerHTML = `${entete} ${header} </br> ${printContents}`;
 

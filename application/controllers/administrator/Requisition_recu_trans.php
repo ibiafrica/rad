@@ -474,8 +474,3 @@ class Requisition_recu_trans extends Admin
 		}
 	}
 }
-
-
-
-/* End of file pos_ibi_requisition_trans.php */
-/* Location: ./application/controllers/administrator/Pos Ibi Requisition.php */

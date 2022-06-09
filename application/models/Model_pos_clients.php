@@ -120,16 +120,16 @@ class Model_pos_clients extends MY_Model
 	public function Cient_commande($id, $status)
 	{
 
-		$this->db->select('c.ID_pos_IBI_COMMANDES,c.COMMANDE_STATUS,CODE,c.CLIENT_ID_COMMANDE, c.DATE_CREATION_pos_IBI_COMMANDES, c.CREATED_BY_pos_IBI_COMMANDES, c.DELETED_STATUS_pos_IBI_COMMANDES,SUM(cp.PRIX_TOTAL) AS PRIX_TOTAL ');
+		$this->db->select('c.ID_POS_IBI_COMMANDES,c.COMMANDE_STATUS,CODE,c.CLIENT_ID_COMMANDE, c.DATE_CREATION_POS_IBI_COMMANDES, c.CREATED_BY_POS_IBI_COMMANDES, c.DELETED_STATUS_POS_IBI_COMMANDES,SUM(cp.QUANTITE*cp.PRIX_VENDU) AS PRIX_TOTAL ');
 		$this->db->from('pos_ibi_commandes c,pos_ibi_commandes_produits cp');
 
 		if ($status != '') {
 			$this->db->where('c.COMMANDE_STATUS=' . $status);
 		}
 		$this->db->where('c.CLIENT_ID_COMMANDE', $id);
-		$this->db->where('c.ID_pos_IBI_COMMANDES=cp.pos_IBI_COMMANDES_ID');
-		$this->db->group_by('c.ID_pos_IBI_COMMANDES');
-		// $this->db->order_by('pos_ibi_commandes.pos_IBI_COMMANDES_ID','DESC');
+		$this->db->where('c.ID_POS_IBI_COMMANDES=cp.POS_IBI_COMMANDES_ID');
+		$this->db->group_by('c.ID_POS_IBI_COMMANDES');
+		// $this->db->order_by('pos_ibi_commandes.POS_IBI_COMMANDES_ID','DESC');
 		$query = $this->db->get();
 		return $query->result();
 	}
@@ -137,14 +137,14 @@ class Model_pos_clients extends MY_Model
 
 	public function Commande_status($cmd)
 	{
-		$status = $this->db->get_where('pos_ibi_commandes', array('ID_pos_IBI_COMMANDES' => $cmd))->row()->COMMANDE_STATUS;
+		$status = $this->db->get_where('pos_ibi_commandes', array('ID_POS_IBI_COMMANDES' => $cmd))->row()->COMMANDE_STATUS;
 		return $status;
 	}
 
 
 	public function join_avaiables()
 	{
-		$this->db->join('pos_ibi_commandes_produits', 'pos_ibi_commandes_produits.pos_IBI_COMMANDES_ID = pos_ibi_commandes.ID_pos_IBI_COMMANDES', 'LEFT');
+		$this->db->join('pos_ibi_commandes_produits', 'pos_ibi_commandes_produits.POS_IBI_COMMANDES_ID = pos_ibi_commandes.ID_POS_IBI_COMMANDES', 'LEFT');
 		return $this;
 	}
 
@@ -158,7 +158,7 @@ class Model_pos_clients extends MY_Model
 	public function Commande_paiement($commande_id)
 	{
 		# code...
-		$paiement = $this->db->query('SELECT c.*,cp.*,m.* FROM pos_ibi_commandes c,pos_paiements cp,mode_paiement m WHERE cp.COMMANDE_ID=c.ID_pos_IBI_COMMANDES AND m.ID_MODE_PAIEMENT=cp.MODE_PAIEMENT AND c.ID_pos_IBI_COMMANDES=' . $commande_id . ' ')->result();
+		$paiement = $this->db->query('SELECT c.*,cp.*,m.* FROM pos_ibi_commandes c,pos_paiements cp,mode_paiement m WHERE cp.COMMANDE_ID=c.ID_POS_IBI_COMMANDES AND m.ID_MODE_PAIEMENT=cp.MODE_PAIEMENT AND c.ID_POS_IBI_COMMANDES=' . $commande_id . ' ')->result();
 		return $paiement;
 	}
 
@@ -173,7 +173,7 @@ class Model_pos_clients extends MY_Model
 	public function Commande_paiement_count_montant_total($commande_id)
 	{
 		# code...
-		$paiement = $this->db->query('SELECT SUM(cp.PRIX_TOTAL) as prix_total FROM pos_ibi_commandes_produits cp WHERE cp.pos_IBI_COMMANDES_ID=' . $commande_id . '
+		$paiement = $this->db->query('SELECT SUM(cp.QUANTITE*cp.PRIX_VENDU) as prix_total FROM pos_ibi_commandes_produits cp WHERE cp.POS_IBI_COMMANDES_ID=' . $commande_id . '
   ')->row();
 		return $paiement;
 	}
@@ -191,7 +191,7 @@ class Model_pos_clients extends MY_Model
 
 	public function get_commande_produits($id)
 	{
-		$requete = $this->db->query("SELECT cp.* FROM pos_ibi_commandes_produits cp WHERE cp.pos_IBI_COMMANDES_ID='" . $id . "' ")->result();
+		$requete = $this->db->query("SELECT cp.* FROM pos_ibi_commandes_produits cp WHERE cp.POS_IBI_COMMANDES_ID='" . $id . "' ")->result();
 
 		return $requete;
 	}

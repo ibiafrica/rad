@@ -45,11 +45,41 @@ jQuery(document).ready(domo);
                   <div class="widget-user-header ">
                     
                      <div class="widget-user-image">
-                        <img class="img-circle" src="<?= BASE_ASSET; ?>/img/view.png" alt="User Avatar">
+                        
+
+                        <label for="content" class="col-sm-2 control-label"> Logo </label>
+
+                        <div class="col-sm-8">
+
+                             <?php if (is_image($contribuable->tp_logo)): ?>
+
+                              <a class="fancybox" rel="group" href="<?= BASE_URL . 'uploads/contribuable/' . $contribuable->tp_logo; ?>">
+
+                                <img src="<?= BASE_URL . 'uploads/contribuable/' . $contribuable->tp_logo; ?>" class="image-responsive" alt="image contribuable" title="tp_logo contribuable" width="40px">
+
+                              </a>
+
+                              <?php else: ?>
+
+                              <label>
+
+                                <a href="<?= BASE_URL . 'administrator/file/download/contribuable/' . $contribuable->tp_logo; ?>">
+
+                                 <img src="<?= get_icon_file($contribuable->tp_logo); ?>" class="image-responsive" alt="image contribuable" title="tp_logo <?= $contribuable->tp_logo; ?>" width="40px"> 
+
+                               <?= $contribuable->tp_logo ?>
+
+                               </a>
+
+                               </label>
+
+                              <?php endif; ?>
+
+                        </div>
+
+                    
                      </div>
-                     <!-- /.widget-user-image -->
-                     <h3 class="widget-user-username">Contribuable</h3>
-                     <h5 class="widget-user-desc">Detail Contribuable</h5>
+                     
                      <hr>
                   </div>
 
@@ -85,6 +115,11 @@ jQuery(document).ready(domo);
                                     <label for="tp_trade_number">Numero du registre</label>
                                     <input type="text" name="tp_trade_number" id="tp_trade_number" class="form-control" value="<?= $contribuable->tp_trade_number ?>" readonly />
                                  </div>
+
+                                 <div class="form-group">
+                                    <label for="tp_trade_number">Etat TVA</label>
+                                     <input type="text" name="status_tva" id="status_tva" class="form-control" value="<?= $contribuable->status_tva == "0" ? "TVA Inclus" : "TVA Exclus" ?>" readonly />
+                                 </div>
                               </div>
                            </div>
                         </div>
@@ -117,6 +152,10 @@ jQuery(document).ready(domo);
                                  <div class="form-group">
                                     <label for="number">Numero de la maison</label>
                                     <input type="text" name="number" id="number" class="form-control" value="<?= $contribuable->tp_address_number ?>" readonly />
+                                 </div>
+                                 <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="text" name="email" id="email" class="form-control" value="<?= $contribuable->tp_email ?>" readonly />
                                  </div>
                               </div>
                            </div>

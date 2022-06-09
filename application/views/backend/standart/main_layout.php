@@ -13,9 +13,10 @@
   </title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
+  <link rel="stylesheet" href="<?= base_url(); ?>fonts/font-awesome.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>fonts/ionicons.min.css">
+
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/admin-lte/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/admin-lte/dist/css/AdminLTE.css">
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/admin-lte/dist/css/skins/_all-skins.min.css">
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/admin-lte/plugins/iCheck/flat/blue.css">
@@ -33,7 +34,6 @@
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>datetimepicker/jquery.datetimepicker.css" />
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>js-scroll/style/jquery.jscrollpane.css" rel="stylesheet" media="all" />
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>flag-icon/css/flag-icon.css" rel="stylesheet" media="all" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <?= $this->cc_html->getCssFileTop(); ?>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -293,7 +293,7 @@
       navbarMenuSlimscroll: false,
     };
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js" type="text/javascript"></script>
+   <script src="<?= BASE_ASSET; ?>jquery-ui/chosen.jquery.min.js"></script>
   <script src="<?= BASE_ASSET; ?>jquery-ui/jquery-ui.js"></script>
   <script src="<?= BASE_ASSET; ?>jquery-switch-button/jquery.switchButton.js"></script>
   <script src="<?= BASE_ASSET; ?>/js/jquery.ui.touch-punch.js"></script>

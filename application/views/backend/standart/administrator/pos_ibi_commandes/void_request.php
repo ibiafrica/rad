@@ -210,9 +210,7 @@
                         ?>
                       </td>
 
-                     <!--  <td><?//= _ent($pos_ibi_commandes->PRIX_TOTAL); ?> Fbu</td> -->
-
-
+                   
                       <td><?= _ent($pos_ibi_commandes->DATE_CREATION_POS_IBI_COMMANDES); ?></td>
                       <td><?php
                           $id_user = _ent($pos_ibi_commandes->CREATED_BY_POS_IBI_COMMANDES);
@@ -286,11 +284,11 @@
                               <div>FACTURE : <?php echo $pos_ibi_commandes->CODE;  ?></div>
                               <hr>
                               <div><strong>A.IDENTIFICATION DU VENDEUR</strong></div>
-                              <div><?php  echo settings_address()['NOM_ENTREPRISE']; ?></div>
-                              <div> NIF: <?php  echo settings_address()['NIF_ENTREPRISE']; ?></div>
-                              <div>RC:<?php  echo settings_address()['RC_ENTREPRISE']; ?></div>
-                              <div>Commune:<?php  echo settings_address()['COMMUNE_ENTREPRISE']; ?></div>
-                              <div>Quartier:<?php  echo settings_address()['QUARTIER_ENTREPRISE'].' ,'.' ' .  settings_address()['AVENUE_ENTREPRISE']; ?></div>
+                              <div><?php  echo settings_address()['tp_name']; ?></div>
+                              <div> NIF: <?php  echo settings_address()['tp_TIN']; ?></div>
+                              <div>RC:<?php  echo settings_address()['tp_trade_number']; ?></div>
+                              <div>Commune:<?php  echo settings_address()['tp_address_commune']; ?></div>
+                              <div>Quartier:<?php  echo settings_address()['tp_address_quartier'].' ,'.' ' .  settings_address()['tp_address_avenue']; ?></div>
                               <div><strong>B.CLIENTS</strong></div>
                               <span style="text-transform:uppercase">NOM :<?php echo $clients->NOM_CLIENT . ' ' . $clients->PRENOM; ?></span><br>
                               <span>Assujeti à la TVA: Non</span>
@@ -313,7 +311,7 @@
                                     <p style="margin-bottom:0px"> <?= $prod->QUANTITE; ?></p>
                                     <p style="margin-bottom:0px"><?= number_format($prod->PRIX_VENDU); ?></p>
                                     <p style="margin-right:10px;margin-bottom:0px"><?= number_format($prod->DISCOUNT_PERCENT); ?></p>
-                                    <!-- <p class="no"><?= number_format((($prod->QUANTITE * $prod->PRIX) - (($prod->QUANTITE * $prod->PRIX) * $prod->DISCOUNT_PERCENT / 100))); ?></p> -->
+                                    
                                     <p></p>
                                   </div>
                                 </div>

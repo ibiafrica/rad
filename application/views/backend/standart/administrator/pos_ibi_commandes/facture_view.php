@@ -25,21 +25,21 @@
                                                     <strong>
                                                         <div style="font-size:12px;" id="print_nom"></div>
 
-                                                        <input type="hidden" id="titre_orphee" value="<?php echo settings_address()['NOM_ENTREPRISE']; ?>">
+                                                        <input type="hidden" id="titre_orphee" value="<?php echo settings_address()['tp_name']; ?>">
                                                     </strong>
                                     </div>
 
                                     <strong>
-                                        <div class="hidden-print"><?php echo settings_address()['NOM_ENTREPRISE']; ?>
+                                        <div class="hidden-print"><?php echo settings_address()['tp_name']; ?>
                                     </strong>
 
                                 </div>
-                                <div style="font-size:9px;"> NIF: <?php echo settings_address()['NIF_ENTREPRISE']; ?>
+                                <div style="font-size:9px;"> NIF: <?php echo settings_address()['tp_TIN']; ?>
 
                                 </div>
-                                <div style="font-size:9px;">RC:<?php echo settings_address()['RC_ENTREPRISE']; ?></div>
-                                <div style="font-size:9px;">Commune:<?php echo settings_address()['COMMUNE_ENTREPRISE']; ?></div>
-                                <div style="font-size:9px;">Quartier:<?php echo settings_address()['QUARTIER_ENTREPRISE'] . ' ,' . ' ' .  settings_address()['AVENUE_ENTREPRISE']; ?></div>
+                                <div style="font-size:9px;">RC:<?php echo settings_address()['tp_trade_number']; ?></div>
+                                <div style="font-size:9px;">Commune:<?php echo settings_address()['tp_address_commune']; ?></div>
+                                <div style="font-size:9px;">Quartier:<?php echo settings_address()['tp_address_quartier'] . ' ,' . ' ' .  settings_address()['tp_address_avenue']; ?></div>
 
                                 <div style="font-size:9px;">B.CLIENTS</div>
                                 <span style="font-size:9px;text-transform:uppercase">NOM :<?= $clients->ID_CLIENT > 1 ? $clients->NOM_CLIENT . ' ' . $clients->PRENOM : ''; ?></span><br>
@@ -86,7 +86,7 @@
                                     foreach ($prods as $prod) :
 
 
-                                        $type_tva = $info['TVA_ENTREPRISE'];
+                                        $type_tva = $info['status_tva'];
 
                                         if ($prod->TVA == 0) {
                                             $prodTVA = 1;
@@ -123,12 +123,12 @@
                                         $total_TVAS += $TVA * $prod->QUANTITE;
                                     ?>
                                         <tr>
-                                            <td style="font-size: 10px !important;"><?= $prod->NAME ?></td>
+                                            <td style="font-size: 10px !important;"><?= $prod->NAME_PRODUIT ?></td>
                                             <td class="qte text-center"><?= $prod->QUANTITE; ?></td>
                                             <td class="prix text-right"><?= round($htva, 2); ?></td>
 
                                             <td class="hidden">
-                                                <input <?php if ($commande['COMMANDE_STATUS'] == 1 or $commande['COMMANDE_STATUS'] == 2) : ?> readonly <?php else : ?> onblur="calcul('itm',this)" <?php endif ?> data-id="<?= $prod->ID_pos_IBI_COMMANDES_PRODUITS ?>" type="number" name="reduction" id="reduction" class="form-control input-sm" value="<?= ($prod->DISCOUNT_PERCENT) ?>" style="max-width: 100px">
+                                                <input <?php if ($commande['COMMANDE_STATUS'] == 1 or $commande['COMMANDE_STATUS'] == 2) : ?> readonly <?php else : ?> onblur="calcul('itm',this)" <?php endif ?> data-id="<?= $prod->ID_POS_IBI_COMMANDES_PRODUITS ?>" type="number" name="reduction" id="reduction" class="form-control input-sm" value="<?= ($prod->DISCOUNT_PERCENT) ?>" style="max-width: 100px">
                                             </td>
                                             <td class="itm text-right"><?= round($prix_total_htva, 2) ?></td>
                                         </tr>
@@ -146,7 +146,7 @@
 
                                     <tr class="hidden" style="background-color: whitesmoke">
                                         <td colspan="4" class="hidden-print">REDUCTION</td>
-                                        <td><input <?php if ($commande['COMMANDE_STATUS'] == 1 or $commande['COMMANDE_STATUS'] == 2) : ?> readonly <?php else : ?> onblur="calcul('all',this)" <?php endif ?> type="number" name="reduction_all" id="reduction_all" data-id="<?= $prods[0]->pos_IBI_COMMANDES_ID ?>" class="form-control input-sm" value="<?= $commande['REDUCTION_COMMANDE'] ?>" style="max-width: 100px"></td>
+                                        <td><input <?php if ($commande['COMMANDE_STATUS'] == 1 or $commande['COMMANDE_STATUS'] == 2) : ?> readonly <?php else : ?> onblur="calcul('all',this)" <?php endif ?> type="number" name="reduction_all" id="reduction_all" data-id="<?= $prods[0]->POS_IBI_COMMANDES_ID ?>" class="form-control input-sm" value="<?= $commande['REDUCTION_COMMANDE'] ?>" style="max-width: 100px"></td>
 
                                     </tr>
 
@@ -179,7 +179,7 @@
 
 
                                 <div style="font-size: 10px;" class="">Date : <?php $date = date('Y-m-d H:i:s');
-                                                                                echo date("d/m/Y H:i:s", strtotime($date)); ?></div>
+                                       echo date("d/m/Y H:i:s", strtotime($date)); ?></div>
 
 
                                 <div style="font-size: 11px;margin-left: -10%" class="text-center"> <?= get_name_user($prod->CREATED_BY_POS_IBI_COMMANDES_PRODUITS); ?><br /><br />
@@ -187,7 +187,7 @@
                                 </div>
 
                                 <div class="modal-footer hidden-print">
-                                    <?php if (settings_address()['NOM_ENTREPRISE'] == "Pos chez orphee") { ?>
+                                    <?php if (settings_address()['tp_name'] == "Pos chez orphee") { ?>
                                         <button class="btn btn-primary print" id="prints" onclick="printDiv('printableArea','CREMERIE')" data-attr="">Imprimer M.C</button>
                                     <?php } ?>
 
@@ -210,18 +210,18 @@
                                             <div><strong>A.IDENTIFICATION DU VENDEUR</strong></div>
                                             <div id="print_nom">
 
-                                                <input type="hidden" id="titre_orphee" value="<?php echo settings_address()['NOM_ENTREPRISE']; ?>">
+                                                <input type="hidden" id="titre_orphee" value="<?php echo settings_address()['tp_name']; ?>">
                                             </div>
 
-                                            <div class="hidden-print"><?php echo settings_address()['NOM_ENTREPRISE']; ?>
+                                            <div class="hidden-print"><?php echo settings_address()['tp_name']; ?>
 
                                             </div>
-                                            <div> NIF: <?php echo settings_address()['NIF_ENTREPRISE']; ?>
+                                            <div> NIF: <?php echo settings_address()['tp_TIN']; ?>
 
                                             </div>
-                                            <div>RC:<?php echo settings_address()['RC_ENTREPRISE']; ?></div>
-                                            <div>Commune:<?php echo settings_address()['COMMUNE_ENTREPRISE']; ?></div>
-                                            <div>Quartier:<?php echo settings_address()['QUARTIER_ENTREPRISE'] . ' ,' . ' ' .  settings_address()['AVENUE_ENTREPRISE']; ?></div>
+                                            <div>RC:<?php echo settings_address()['tp_trade_number']; ?></div>
+                                            <div>Commune:<?php echo settings_address()['tp_address_commune']; ?></div>
+                                            <div>Quartier:<?php echo settings_address()['tp_address_quartier'] . ' ,' . ' ' .  settings_address()['tp_address_avenue']; ?></div>
 
                                             <div><strong>B.CLIENTS</strong></div>
                                             <span style="text-transform:uppercase">NOM :<?php echo $clients->NOM_CLIENT . ' ' . $clients->PRENOM; ?></span><br>
@@ -255,7 +255,7 @@
 
                                     foreach ($prods as $prod) :
 
-                                        $type_tva = $info['TVA_ENTREPRISE'];
+                                        $type_tva = $info['status_tva'];
 
                                         if ($prod->TVA == 0) {
                                             $prodTVA = 1;
@@ -298,7 +298,7 @@
                                             <td class="prix text-right"><?= round($htva, 2); ?></td>
 
                                             <td class="hidden">
-                                                <input <?php if ($commande['COMMANDE_STATUS'] == 1 or $commande['COMMANDE_STATUS'] == 2) : ?> readonly <?php else : ?> onblur="calcul('itm',this)" <?php endif ?> data-id="<?= $prod->ID_pos_IBI_COMMANDES_PRODUITS ?>" type="number" name="reduction" id="reduction" class="form-control input-sm" value="<?= ($prod->DISCOUNT_PERCENT) ?>" style="max-width: 100px">
+                                                <input <?php if ($commande['COMMANDE_STATUS'] == 1 or $commande['COMMANDE_STATUS'] == 2) : ?> readonly <?php else : ?> onblur="calcul('itm',this)" <?php endif ?> data-id="<?= $prod->ID_POS_IBI_COMMANDES_PRODUITS ?>" type="number" name="reduction" id="reduction" class="form-control input-sm" value="<?= ($prod->DISCOUNT_PERCENT) ?>" style="max-width: 100px">
                                             </td>
                                             <td class="itm text-right"><?= round($prix_total_htva, 2) ?></td>
                                         </tr>
@@ -316,7 +316,7 @@
 
                                     <tr class="hidden" style="background-color: whitesmoke">
                                         <td colspan="4" class="hidden-print">REDUCTION</td>
-                                        <td><input <?php if ($commande['COMMANDE_STATUS'] == 1 or $commande['COMMANDE_STATUS'] == 2) : ?> readonly <?php else : ?> onblur="calcul('all',this)" <?php endif ?> type="number" name="reduction_all" id="reduction_all" data-id="<?= $prods[0]->pos_IBI_COMMANDES_ID ?>" class="form-control input-sm" value="<?= $commande['REDUCTION_COMMANDE'] ?>" style="max-width: 100px"></td>
+                                        <td><input <?php if ($commande['COMMANDE_STATUS'] == 1 or $commande['COMMANDE_STATUS'] == 2) : ?> readonly <?php else : ?> onblur="calcul('all',this)" <?php endif ?> type="number" name="reduction_all" id="reduction_all" data-id="<?= $prods[0]->POS_IBI_COMMANDES_ID ?>" class="form-control input-sm" value="<?= $commande['REDUCTION_COMMANDE'] ?>" style="max-width: 100px"></td>
 
                                     </tr>
 
@@ -356,7 +356,7 @@
                                 </div>
 
                                 <div class="modal-footer hidden-print">
-                                    <?php if (settings_address()['NOM_ENTREPRISE'] == "Pos chez orphee") { ?>
+                                    <?php if (settings_address()['tp_name'] == "Pos chez orphee") { ?>
                                         <button class="btn btn-primary print" id="prints" onclick="printDiv('printableArea','CREMERIE')" data-attr="">Imprimer M.C</button>
                                     <?php } ?>
 

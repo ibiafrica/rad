@@ -31,41 +31,39 @@
                      <div class="widget-user-header ">
                         <div class="row pull-center" style="margin-left:5%">
 
-                           <div class="col-md-4">
+                           <div class="col-md-2"></div>
+
+                           <div class="col-md-5">
                               <input type="text" class="form-control" name="q" id="filter" placeholder="Recherche" value="<?= $this->input->get('q'); ?>">
                            </div>
 
-                           <div class="col-md-3">
-                              <select class="form-control form-control chosen chosen-select-deselect" name="categorie_article" id="categorie_article">
-                                 <option value=""> select categorie</option>
-                                 <?php foreach ($categorie_ar as $key) : ?>
-                                    <option value="<?php echo $key->ID_CATEGORIE; ?>"> <?php echo $key->NOM_CATEGORIE; ?>
-                                    </option>
-                                 <?php endforeach ?>
-                              </select>
-                           </div>
-                           <div class="col-md-1">
+                           <!--  -->
+                           <div class="col-md-2">
                               <button type="submit" class="btn btn-flat" name="sbtn" id="sbtn" value="Apply" title="<?= cclang('filter_search'); ?>">
                                  <i class="fa fa-search"></i>
                               </button>
-                           </div>
+                              <a class="btn btn-default btn-flat" name="reset" id="reset" value="Apply" href="<?= base_url('articles/'.$this->uri->segment(2).'/index');?>" title="<?= cclang('reset_filter'); ?>">
+                            <i class="fa fa-undo"></i>
+                            </a>
 
-                           <div class="col-md-1">
-
-                              <?php is_allowed('articles_add', function () { ?>
+                            <?php is_allowed('articles_add', function () { ?>
                                  <?php
                                  $store = $this->uri->segment(2);
-                                 /*if ($store == 1) {*/ ?>
+                                 if ($store == 2) { ?>
                                  <a class="btn btn-flat btn-success btn_add_new" id="btn_add_new" title="" href="<?= site_url('articles/' . $this->uri->segment(2) . '/add'); ?>"><i class="glyphicon glyphicon-plus"></i></a>
-                                 <?php /*}*/
+                                 <?php }
                                  ?>
                               <?php }) ?>
-
                            </div>
+
                            <div class="col-md-1">
                               <?php is_allowed('articles_export', function () { ?>
-                                 <a class="btn btn-flat btn-danger" title="" href="<?= site_url('administrator/articles/export_pdf/' . $this->uri->segment(2) . ''); ?>"><i class="fa fa-file-pdf-o"></i></a>
+                                 <!-- <a class="btn btn-flat btn-danger" title="" href="<?= site_url('administrator/articles/export_pdf/' . $this->uri->segment(2) . ''); ?>"><i class="fa fa-file-pdf-o"></i></a> -->
                               <?php }) ?>
+
+                              <?php is_allowed('articles_export', function(){?>
+                             <a class="btn btn-flat btn-success" title="Export XLS" href="<?= site_url('administrator/articles/export/'.$this->uri->segment(2).''); ?>"><i class="fa fa-file-excel-o" ></i> </a>
+                        <?php }) ?>
                            </div>
 
                            <div class="col-md-1">
@@ -88,14 +86,14 @@
                             <input type="checkbox" class="flat-red toltip" id="check_all" name="check_all" title="check all">
                            </th> -->
                               <th>No</th>
-                              <th>Codebar</th>
-                              <th>Nom article</th>
-                              <th>Unité de mesure</th>
-                              <th>Categorie</th>
-                              <th>Poids</th>
-                              <th>Prix de vente</th>
-                              <th>Prix d'achat</th>
-                              <th hidden>Status article</th>
+                              <th data-field="CODEBAR_ARTICLE"data-sort="1" data-primary-key="0">Codebar</th>
+                              <th data-field="DESIGN_ARTICLE"data-sort="1" data-primary-key="0">Article</th>
+                              <th data-field="UNITE_ARTICLE"data-sort="1" data-primary-key="0">Unité de mesure</th>
+                              <th data-field="NOM_CATEGORIE"data-sort="1" data-primary-key="0">Categorie</th>
+                              <th data-field="POIDS_ARTICLE"data-sort="1" data-primary-key="0">Poids</th>
+                              <th>P.V</th>
+                              <th>P.A</th>
+                              <th hidden>Status</th>
                               <th>Quantite</th>
                               <th>Seuil</th>
 

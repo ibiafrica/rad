@@ -73,38 +73,95 @@
 
                 <div class="col-md-12">
 
-                  <div class="col-lg-5 col-md-5 col-sm-5">
+                  <div class="col-lg-2 col-md-2 col-sm-2">
 
                     <div class="input-group">
                       <div class="input-group-addon">
                         DU
                       </div>
-              <input type="date" name="DEBUT" class="form-control datepicker DEBUT" value="<?php if ($start != '') { echo $start; } ?>">
+              <input type="text" name="DEBUT" class="form-control datepicker DEBUT" value="<?php if ($start != '') { echo $start; } ?>">
                     </div>
                   </div>
 
-                  <div class="col-lg-5 col-md-5 col-sm-5">
+                  <div class="col-lg-2 col-md-2 col-sm-2">
 
                     <div class="input-group">
                       <div class="input-group-addon">
                         AU
                       </div>
-                      <input type="date" name="FIN" class="form-control datepicker FIN" value="<?php if ($end != '') {
+                      <input type="text" name="FIN" class="form-control datepicker FIN" value="<?php if ($end != '') {
                                             echo $end;
                                           }
                                           ?>">
                     </div>
                   </div>
 
-                  <div class="col-md-1">
-
-                    <button type="button" class="btn btn-flat" name="sbtns" id="sbtns" value="Applys" title="<?= ('Detaille'); ?>">
-                        <i class="fa fa-list"></i> Details
-                      </button>
-                        
-                      </a>
-                    
+                  <div class="col-sm-2" style="border: 0px solid;">
+                    <input type="text" class="form-control" name="q" id="filter" placeholder="<?= 'Recherher'; ?>" value="<?= $this->input->get('q'); ?>">
                   </div>
+
+                  <div class="col-sm-2" style="border: 0px solid;">
+                    <select class="form-control" name="status">
+                      <option value="">Tout </option>
+                      <option value="2">
+                        Complete
+                      </option>
+                      <option value="0">
+                        En attente
+                      </option>
+                      <option value="10">
+                        Credit
+                      </option>
+                      <option value="11">
+                        Complementaire
+                      </option>
+                    </select>
+                  </div>
+
+
+                  <div class="col-sm-2" style="border: 0px solid;">
+                    <select class="form-control" name="type_commande">
+                      <option value="">
+                        Tous les commandes
+                      <option value="1">Detaille commandes </option>
+                      </option>
+                      
+                    </select>
+                  </div>
+
+
+                  <div class="col-sm-2" style="border: 0px solid;">
+                    <input type="hidden" name="f" id="field">
+                    <div class="col-sm-12 padd-left-0 ">
+                      <button type="submit" class="btn btn-flat" name="sbtn" id="sbtn" value="Apply" title="<?= cclang('filter_search'); ?>">
+                        <i class="fa fa-search"></i>
+                      </button>
+                      <a class="btn btn-default btn-flat" name="reset" id="reset" value="Apply" href="<?= base_url('administrator/pos_ibi_commandes/index'); ?>" title="Réinitialiser la recherche">
+                        <i class="fa fa-undo"></i>
+                      </a>
+
+                      <button class="btn btn-default" onclick="tableToExcel('table_cmd', '')">
+                          <span class="glyphicon glyphicon-share"></span>
+                          Xls
+                         </button>
+
+                  </div>
+                  
+
+
+                    <!-- <div class="col-sm-8">
+                    <?php
+
+                    $statut;
+                    if ($statut != null) { ?>
+                      <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> Pos Ibi Commandes" href="<?= site_url('administrator/pos_ibi_commandes/det_pdf_detail_by_status/' . $statut); ?>"><i class="fa fa-file-pdf-o"></i> </a>
+                    <?php  }
+
+                    ?>
+
+                  </div> -->
+                  </div>
+
                 </div>
 
 
@@ -117,9 +174,7 @@
 
                 <div class="col-sm-12 col-md-12" style="">
 
-                  <div class="col-sm-5" style="border: 0px solid;">
-                    <input type="text" class="form-control" name="q" id="filter" placeholder="<?= 'Recherher'; ?>" value="<?= $this->input->get('q'); ?>">
-                  </div>
+                  
 
                   <!-- <div class="col-sm-3" style="border: 0px solid;">
                    
@@ -141,55 +196,7 @@
                       <?php endforeach; ?>
                     </select>
                   </div> -->
-
-
-                  <div class="col-sm-4" style="border: 0px solid;">
-                    <select class="form-control" name="status">
-                      <option value="">Tout </option>
-                      <option value="2">
-                        Complete
-                      </option>
-                      <option value="0">
-                        En attente
-                      </option>
-                      <option value="10">
-                        Credit
-                      </option>
-                      <option value="11">
-                        Complementaire
-                      </option>
-                    </select>
-                  </div>
-
-                  <div class="col-sm-3" style="border: 0px solid;">
-                    <input type="hidden" name="f" id="field">
-                    <div class="col-sm-12 padd-left-0 ">
-                      <button type="submit" class="btn btn-flat" name="sbtn" id="sbtn" value="Apply" title="<?= cclang('filter_search'); ?>">
-                        <i class="fa fa-search"></i>
-                      </button>
-                      <a class="btn btn-default btn-flat" name="reset" id="reset" value="Apply" href="<?= base_url('administrator/pos_ibi_commandes/index'); ?>" title="Réinitialiser la recherche">
-                        <i class="fa fa-undo"></i>
-                      </a>
-
-                            <button class="btn btn-default" onclick="tableToExcel('table_cmd', '')">
-                          <span class="glyphicon glyphicon-share"></span>
-                          Export xls
-                         </button>
-                    </div>
-
-
-                    <!-- <div class="col-sm-8">
-                    <?php
-
-                    $statut;
-                    if ($statut != null) { ?>
-                      <a class="btn btn-flat btn-success" title="<?= cclang('export'); ?> Pos Ibi Commandes" href="<?= site_url('administrator/pos_ibi_commandes/det_pdf_detail_by_status/' . $statut); ?>"><i class="fa fa-file-pdf-o"></i> </a>
-                    <?php  }
-
-                    ?>
-
-                  </div> -->
-                  </div>
+                  
                 </div>
 
               </div>
@@ -234,13 +241,18 @@
 
             <div class="table-responsive row">
               <table class="table table-bordered table-striped dataTable" id="table_cmd">
+
+                <?php if ($this->input->get('type_commande')=='') {
+
+
+                 ?>
                 <thead>
                   <tr class="">
 
                     <th>Code</th>
                     <th>Client</th>
-                    <th>Table</th>
-                    <th>Status</th>
+                    <th class="text-right">Montant</th>
+                    <th class="text-center">Status</th>
                     <th>OBR</th>
                     <!-- <th>Montant</th> -->
                     <th>Date creation</th>
@@ -262,19 +274,32 @@
 
                           ?></td>
 
-                      <td>
+                      <td class="text-right">
 
                         <?php
-                        $id_table = _ent($pos_ibi_commandes->TABLE_ID);
+
+                       $montant= $this->db->select("SUM(QUANTITE*PRIX_VENDU) AS MONTANT")
+                        ->from("pos_ibi_commandes_produits cp")
+                        
+                        ->where("cp.REF_COMMAND_CODE", $pos_ibi_commandes->CODE)
+
+                         ->where("cp.DELETED_STATUS_POS_IBI_COMMANDES_PRODUITS",0)
+                        
+                        ->get()->row();
+
+                        echo $montant->MONTANT;
+
+
+                        /*$id_table = _ent($pos_ibi_commandes->TABLE_ID);
                         $query = $this->db->get_where('pos_ibi_commande_location', array('ID_COMMANDE_LOCATION' => $id_table, 'DELETE_STATUS' => 0));
                         if ($query->num_rows() > 0) {
                           echo $query->row()->DESIGNATION;
-                        }
+                        }*/
 
                         ?>
 
                       </td>
-                      <td>
+                      <td class="text-center">
                         <?php
                         $status = $pos_ibi_commandes->COMMANDE_STATUS;
                         if ($status == 0) {
@@ -310,17 +335,8 @@
                           ?></td>
                       <td width="150">
 
-                        <?php /*is_allowed('pos_ibi_commandes_view', function () use ($pos_ibi_commandes) { ?>
-                          <a href="<?= base_url('administrator/pos_ibi_commandes/factures_journaliere/' . $pos_ibi_commandes->ID_POS_IBI_COMMANDES) ?>" class="btn_produit_data btn btn-default btn-xs"><i class="fa fa-arrow-right"></i></a>
-                        <?php })*/ ?>
-
                         <?php $status = $pos_ibi_commandes->COMMANDE_STATUS; ?>
-                        <?php /*if ($status == 0) : ?>
-                          <?php is_allowed('pos_ibi_commandes_addModify', function () use ($pos_ibi_commandes) { ?>
-                            <button data-cmdid="<?= $pos_ibi_commandes->ID_POS_IBI_COMMANDES; ?>" style="margin-right: 2px" class="btn btn-warning btn-xs btnoptions"><i class="fa fa-plus"></i> <i class="fa fa-edit"></i></button>
-                          <?php }) ?>
-
-                        <?php endif;*/ ?>
+               
 
                         <?php is_allowed('pos_ibi_commandes_facture', function () use ($pos_ibi_commandes) { ?>
                           <a href="<?= base_url('administrator/pos_ibi_commandes/facture_view/' . $pos_ibi_commandes->ID_POS_IBI_COMMANDES) ?>" style="margin-right: 2px" data-title="facture" data-id="<?php echo $pos_ibi_commandes->ID_POS_IBI_COMMANDES ?>" class="btn_produit_data btn btn-default btn-xs"><i class="fa fa-th-list"></i></a>
@@ -342,11 +358,7 @@
                           <button data-toggle="modal" data-target="#myModalbon<?php echo $pos_ibi_commandes->ID_POS_IBI_COMMANDES ?>" style="margin-right: 2px" data-title="Bon de commandes" data-id="" class="btn btn-success btn-xs" title="bons"><i class="fa fa-list"></i></button>
                         <?php }) ?>
 
-                        <?php /*if ($pos_ibi_commandes->COMMANDE_STATUS == 0) : ?>
-                          <?php is_allowed('pos_ibi_commandes_delete', function () use ($pos_ibi_commandes) { ?>
-                            <a class="btn btn-danger btn-xs remove-data" data-href="<?= base_url('administrator/pointdesventes/delete/0') . "/" . $pos_ibi_commandes->ID_POS_IBI_COMMANDES . "/0" ?>"><i class="fa fa-close"></i></a>
-                          <?php }) ?>
-                        <?php endif;*/ ?>
+                       
                       </td>
                     </tr>
 
@@ -377,7 +389,7 @@
                                 </div>
                                 <?php foreach ($bon_cmd as $prod) : ?>
                                   <div style="width: 100%;display: flex;justify-content:space-between">
-                                    <p style="width: 23rem"><?= $prod->NAME; ?></p>
+                                    <p style="width: 23rem"><?= $prod->NAME_PRODUIT; ?></p>
                                     <p><?= $prod->QUANTITE; ?></p>
                                     <p><?= $prod->PRIX_VENDU; ?></p>
                                     <p><?= $prod->DISCOUNT_PERCENT; ?></p>
@@ -408,7 +420,15 @@
 
                     <h4 class="modal-title">Transferer la commande</h4>
                   </div>
-                  <div class="modal-body" id="target_<?php echo $pos_ibi_commandes->ID_POS_IBI_COMMANDES;  ?>">
+
+                  
+                    <?php if (count($pos_ibi_commandess) > 0) { ?>
+                     
+                   
+                 
+                  <div class="modal-body" id="target_<?php echo $pos_ibi_commandes->ID_POS_IBI_COMMANDES;
+                  ?>">
+
                     <div>
                       <div class="form-group">
                         <input placeholder="Recherche" type="text" class="form-control" id="clientFilter">
@@ -417,6 +437,9 @@
 
                       </ul>
                     </div>
+
+                  <?php } ?>
+                  
                   </div>
                   <div class="modal-footer" id="clientfooter">
 
@@ -433,6 +456,74 @@
               </tr>
             <?php endif; ?>
             </tbody>
+          <?php }else{
+
+
+
+           ?>
+
+            <thead>
+                  <tr class="">
+                    <th>#</th>
+                    <th>Facture</th>
+                    <th>Articles</th>
+                    <th>Categorie</th>
+                    <th>Type</th>
+                    <th>Quantite</th>
+                    <th class="text-right">P.A</th>
+                    <th class="text-right">P.V</th>
+                    <th class="text-right">P.A total</th>
+                    <th class="text-right">P.V total</th>
+                    <!-- <th>Montant</th> -->
+                    <th>Date creation</th>
+                    <th>Auteur</th>
+                   
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                  <?php $n=0; 
+                        $tot=0;
+                        $totAchat=0; 
+
+                  foreach ($pos_ibi_commandess as $pos_ibi_commandes) :
+
+                  $tot += ($pos_ibi_commandes->QUANTITE_SF*$pos_ibi_commandes->UNIT_PRICE_SF);
+                  $totAchat += ($pos_ibi_commandes->QUANTITE_SF*$pos_ibi_commandes->PRIX_ACHAT_SF);
+                  $n++;
+
+                  /*$articles=$this->db->query('SELECT NOM_CATEGORIE FROM pos_store_1_ibi_articles cl LEFT JOIN categories c ON cl.REF_CATEGORIE_ARTICLE=c.ID_CATEGORIE WHERE cl.CODEBAR_ARTICLE="'.$pos_ibi_commandes->REF_PRODUCT_CODEBAR.'"');*/
+
+                  ?>
+                    <tr>
+                      
+                      <td><?=$n; ?></td>
+                      <td><?= _ent($pos_ibi_commandes->CODE); ?></td>
+                      <td><?= _ent($pos_ibi_commandes->DESIGN_ARTICLE); ?></td>
+                      <td><?= _ent($pos_ibi_commandes->NOM_CATEGORIE); ?></td>
+                      <td><?= _ent($pos_ibi_commandes->TYPE_SF); ?></td>
+                      <td class="text-center"><?= _ent($pos_ibi_commandes->QUANTITE_SF); ?></td>
+                      <td class="text-right"><?=_ent($pos_ibi_commandes->PRIX_ACHAT_SF);?></td>
+                      
+                      <td class="text-right"><?= _ent($pos_ibi_commandes->UNIT_PRICE_SF); ?></td>
+                      <td class="text-right"><?= _ent($pos_ibi_commandes->QUANTITE_SF*$pos_ibi_commandes->PRIX_ACHAT_SF); ?></td>
+                      <td class="text-right"><?= _ent($pos_ibi_commandes->QUANTITE_SF*$pos_ibi_commandes->UNIT_PRICE_SF); ?></td>
+                      <td><?= _ent($pos_ibi_commandes->DATE_CREATION_SF); ?></td>
+                      <td><?= _ent(get_name_user($pos_ibi_commandes->CREATED_BY_SF)); ?></td>
+
+                      <td>
+                      </tr>
+
+                    <?php endforeach ?>
+
+                    <tr>
+                      <th colspan="7">TOTAL</th>
+                      <th colspan="" class="text-right"><?=$totAchat;?></th>
+                      <th class="text-right"><?=$tot;?></th>
+                    </tr>
+                </tbody>
+
+            <?php } ?>
             </table>
           </div>
         </div>

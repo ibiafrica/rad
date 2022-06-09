@@ -168,7 +168,7 @@ $db['default'] = array(
 
     'password' => '',
 
-    'database' => 'ibiafric_rad_pos',
+    'database' => 'ibiafric_pos',
 
     //'database' => 'ibiafric_Pos',
 

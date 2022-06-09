@@ -29,8 +29,9 @@ class Model_POS_ibi_commandes extends MY_Model
 		parent::__construct($config);
 	}
 
-	public function count_all($debut = null, $fin = null, $shift = null, $q = null, $status = null, $field = null)
+	public function count_all($debut = null, $fin = null, $shift = null, $type = null, $q = null, $status = null, $field = null)
 	{
+		if ($type=='') {
 		$iterasi = 1;
 		$num = count($this->field_search);
 		$where = NULL;
@@ -76,9 +77,50 @@ class Model_POS_ibi_commandes extends MY_Model
 
 		return $query->num_rows();
 	}
+	else{
 
-	public function get($debut = null, $fin = null, $shift = null, $q = null, $field = null, $status = null, $limit = 0, $offset = 0, $select_field = [])
+      $iterasi = 1;
+		$num = count($this->field_search);
+		$where = NULL;
+		$q = $this->scurity($q);
+		$field = $this->scurity($field);
+
+		// if (is_array($select_field) AND count($select_field)) {
+		$this->db->select(' * ');
+		$this->db->from('pos_ibi_commandes c,pos_store_1_ibi_articles_stock_flow f,pos_store_1_ibi_articles art,categories ca');
+	
+		if ($status != '') {
+			$this->db->where('c.COMMANDE_STATUS=' . $status);
+		}
+
+		if ($shift != '') {
+			$this->db->where('c.ID_CASHIER_SHIFT=' . $shift);
+		}
+
+		if ($debut != '' && $fin  != '') {
+
+			$debut = $debut . ' 00:00:00';
+			$fin = $fin . ' 23:59:59';
+			$this->db->where('f.DATE_CREATION_SF BETWEEN "' . $debut . '" AND "' . $fin . '"');
+		}
+
+		$this->db->where("c.DELETED_STATUS_POS_IBI_COMMANDES", 0);
+		$this->db->where("c.CODE=f.REF_COMMAND_CODE_SF");
+		$this->db->where("f.REF_ARTICLE_BARCODE_SF=art.CODEBAR_ARTICLE");
+		$this->db->where("art.REF_CATEGORIE_ARTICLE=ca.ID_CATEGORIE");
+
+
+		$querys = $this->db->get();
+		return $querys->row();
+	   }
+
+	}
+
+	public function get($debut = null, $fin = null, $shift = null,$type = null, $q = null, $field = null, $status = null, $limit = 0, $offset = 0, $select_field = [])
 	{
+		if ($type=='') {
+			
+		
 		$iterasi = 1;
 		$num = count($this->field_search);
 		$where = NULL;
@@ -133,6 +175,55 @@ class Model_POS_ibi_commandes extends MY_Model
 		// exit;
 
 		return $query->result();
+
+	}elseif ($type=1) {
+
+   $iterasi = 1;
+		$num = count($this->field_search);
+		$where = NULL;
+		$q = $this->scurity($q);
+		$field = $this->scurity($field);
+
+		// if (is_array($select_field) AND count($select_field)) {
+		$this->db->select(' * ');
+		$this->db->from('pos_ibi_commandes c,pos_store_1_ibi_articles_stock_flow f,pos_store_1_ibi_articles art,categories ca');
+	
+		if ($status != '') {
+			$this->db->where('c.COMMANDE_STATUS=' . $status);
+		}
+
+		if ($shift != '') {
+			$this->db->where('c.ID_CASHIER_SHIFT=' . $shift);
+		}
+
+		if ($debut != '' && $fin  != '') {
+
+			$debut = $debut . ' 00:00:00';
+			$fin = $fin . ' 23:59:59';
+			$this->db->where('c.DATE_CREATION_POS_IBI_COMMANDES BETWEEN "' . $debut . '" AND "' . $fin . '"');
+		}
+
+		$this->db->where("c.DELETED_STATUS_POS_IBI_COMMANDES", 0);
+		$this->db->where("c.CODE=f.REF_COMMAND_CODE_SF");
+		$this->db->where("f.REF_ARTICLE_BARCODE_SF=art.CODEBAR_ARTICLE");
+		$this->db->where("art.REF_CATEGORIE_ARTICLE=ca.ID_CATEGORIE");
+		$this->db->order_by("c.DATE_CREATION_POS_IBI_COMMANDES", "DESC");
+
+		//$this->db->limit($limit=10000, $offset);
+
+
+
+		$querys = $this->db->get();
+
+
+		return $querys->result();
+		//dump($this->db->last_query());die;
+	   }
+
+
+      //$queryss->result();
+
+	   //dump($this->db->last_query());
 	}
 
 
@@ -412,6 +503,17 @@ class Model_POS_ibi_commandes extends MY_Model
 
 
 	public function join_avaiable()
+	{
+		$this->db->join('pos_clients', 'pos_clients.ID_CLIENT = pos_ibi_commandes.CLIENT_ID_COMMANDE', 'LEFT');
+		// $this->db->join('pos_clients pos_clients1', 'pos_clients1.ID_CLIENT = pos_ibi_commandes.CLIENT_FILE_ID_POS_IBI_COMMANDES', 'LEFT');
+
+		$this->db->join('aauth_users', 'aauth_users.id = pos_ibi_commandes.CREATED_BY_POS_IBI_COMMANDES', 'LEFT');
+
+		return $this;
+	}
+
+
+	public function join_avaiables()
 	{
 		$this->db->join('pos_clients', 'pos_clients.ID_CLIENT = pos_ibi_commandes.CLIENT_ID_COMMANDE', 'LEFT');
 		// $this->db->join('pos_clients pos_clients1', 'pos_clients1.ID_CLIENT = pos_ibi_commandes.CLIENT_FILE_ID_POS_IBI_COMMANDES', 'LEFT');

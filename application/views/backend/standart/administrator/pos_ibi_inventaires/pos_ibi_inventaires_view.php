@@ -355,9 +355,9 @@
     console.log("clicked", divName);
     var printContents = document.getElementById(divName).innerHTML;
     originalContents = document.body.innerHTML;
-    const entete = `<div style="margin-bottom: 3rem"><p><strong><?php echo settings_address()['NOM_ENTREPRISE']; ?></strong></p>
-                              <p>Quartier : <?php echo settings_address()['QUARTIER_ENTREPRISE']; ?></p>
-                              <p><?php echo settings_address()['AVENUE_ENTREPRISE']; ?></p></div>`
+    const entete = `<div style="margin-bottom: 3rem"><p><strong><?php echo settings_address()['tp_name']; ?></strong></p>
+                              <p>Quartier : <?php echo settings_address()['tp_address_quartier']; ?></p>
+                              <p><?php echo settings_address()['tp_address_avenue']; ?></p></div>`
     const header = $("#header").html();
 
     document.body.innerHTML = `${entete} </br> ${printContents}  <button class="hidden-print btn btn-default" onclick="returntoView()">retour</button>`;

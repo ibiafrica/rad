@@ -98,9 +98,13 @@ jQuery(document).ready(domo);
                             </a>
                          </div>
                       </div>
+                         <?php if ($this->uri->segment(2)==2) {
+                           
+                         ?>
                         <?php is_allowed('articles_add', function(){?>
                         <a class="btn btn-flat btn-success btn_add_new" id="btn_add_new" title="Ajouter le produit" href="<?=  site_url('administrator/articles/add/'.$this->uri->segment(4).''); ?>"><i class="glyphicon glyphicon-plus" ></i> </a>
                         <?php }) ?>
+                     <?php  } ?>
                         <?php is_allowed('articles_export', function(){?>
                         <a class="btn btn-flat btn-success" title="Export XLS" href="<?= site_url('administrator/articles/export/'.$this->uri->segment(4).''); ?>"><i class="fa fa-file-excel-o" ></i> </a>
                         <?php }) ?>

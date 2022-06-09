@@ -1,40 +1,4 @@
- <link href="<?php echo base_url() ?>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 
- <!-- Themify icons -->
-
- <link href="<?php echo base_url() ?>assets/themify-icons/themify-icons.min.css" rel="stylesheet" type="text/css" />
- <!-- Pe-icon -->
- <link href="<?php echo base_url() ?>assets/pe-icon-7-stroke/css/pe-icon-7-stroke.css" rel="stylesheet" type="text/css" /> <!-- Data Tables -->
- <link href="<?php echo base_url() ?>cart/plugins/datatables/dataTables.min.css" rel="stylesheet" type="text/css" />
- <!-- Theme style -->
- <!-- modals css -->
- <link href="<?php echo base_url() ?>cart/plugins/modals/component.css" rel="stylesheet" type="text/css" />
- <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
- <!-- summernote css -->
-
- <!-- Select2 min.css -->
-
- <link href="<?php echo base_url() ?>cart/css/select2.min.css" rel="stylesheet" type="text/css" />
-
- <!-- Input tag css -->
-
- <!-- Toastr -->
-
- <!-- Custom css -->
-
- <link href="<?php echo base_url() ?>cart/dist/css/custom.css" rel="stylesheet" type="text/css" />
-
-
- <!-- Product invoice js -->
-
- <script src="<?php echo base_url() ?>asset/js/admin_js/json/product_invoice.js.php"></script>
- <link href="<?php echo base_url() ?>asset/jquery-ui-1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css" />
- <!-- Invoice js -->
- <script src="<?php echo base_url() ?>cart/plugins/jQuery/jquery-1.12.4.min.js" type="text/javascript"></script>
-
- <script src="<?php echo base_url() ?>asset/js/admin_js/invoice.js" type="text/javascript"></script>
  <style type="text/css">
      input[type=radio],
      input.radio {
@@ -111,7 +75,7 @@
                                  <label for="categorie">Categorie<i class="required">*</i></label>
                                  <select id="categorie" class="form-control chosen chosen-select" data-placeholder="Categorie">
                                      <option></option>
-                                     <?php foreach (db_get_all_data('pos_ibi_articles_categories', array('STORE_ID' => $this->uri->segment(2))) as $row) : ?>
+                                     <?php foreach (db_get_all_data('categories', array('STORE_ID' => $this->uri->segment(2))) as $row) : ?>
                                          <option value="<?php echo $row->ID_CATEGORIE; ?>"><?php echo $row->NOM_CATEGORIE; ?></option>
                                      <?php endforeach; ?>
                                  </select>
@@ -198,7 +162,7 @@
                              </div>
 
 
-                             <div class="form-group">
+                             <div class="form-group" hidden>
                                  <label>Quantité</label>
                                  <input type="number" class="form-control" name="quantite_article" id="quantite_article" placeholder="quantite" value="">
                              </div>
@@ -211,16 +175,17 @@
                              </div>
 
 
+                             <div class="form-group">
+                                 <label for="is_ingredient">Nature article <i class="required">*</i></label>
+                                 <select id="NATURE" class="form-control chosen chosen-select" data-placeholder="Selectionner Nature">
+                                     <option></option>
+                                     <option value="0"><?php echo 'Quantifiable'; ?></option>
 
-
-
-                             <div class="form-group" style="margin-top: 10px !important">
-                                 <div class="some-class">
-                                     <input type="radio" class="radio r_1" checked="checked" id="b" name="b" value="0">
-                                     <label for="b">Quantifiable</label>
+                                     <option value="1"><?php echo 'Non quantifiable'; ?></option>
                                      
-                                 </div>
+                                 </select>
                              </div>
+
                          </div>
                      </div>
 
@@ -255,55 +220,9 @@
 
  <!-- SlimScroll -->
 
- <script src="<?php echo base_url() ?>cart/plugins/slimScroll/jquery.slimscroll.min.js" type="text/javascript"></script>
 
- <!-- FastClick -->
 
- <script src="<?php echo base_url() ?>cart/plugins/fastclick/fastclick.min.js" type="text/javascript"></script>
 
- <!-- AdminBD frame -->
-
- <script src="<?php echo base_url() ?>cart/plugins/sparkline/sparkline.min.js" type="text/javascript"></script>
-
- <!-- Counter js -->
-
- <script src="<?php echo base_url() ?>cart/plugins/counterup/waypoints.min.js" type="text/javascript"></script>
-
- <script src="<?php echo base_url() ?>cart/plugins/counterup/jquery.counterup.min.js" type="text/javascript">
-
- </script>
-
- <!-- iCheck js -->
-
- <script src="<?php echo base_url() ?>cart/plugins/icheck/icheck.min.js" type="text/javascript"></script>
-
- <!-- DataTables js -->
-
- <script src="<?php echo base_url() ?>cart/plugins/datatables/dataTables.min.js" type="text/javascript"></script>
-
- <!-- Dashboard js -->
-
- <script src="<?php echo base_url() ?>cart/dist/js/dashboard.min.js" type="text/javascript"></script>
-
- <script src="<?php echo base_url() ?>cart/js/select2.min.js" type="text/javascript"></script>
-
- <!-- Modal js -->
-
- <script src="<?php echo base_url() ?>cart/plugins/modals/classie.js" type="text/javascript"></script>
-
- <!-- Summernote js -->
-
- <script src="<?php echo base_url() ?>cart/plugins/summernote/summernote.min.js" type="text/javascript"></script>
-
- <script src="<?php echo base_url() ?>cart/plugins/modals/modalEffects.js" type="text/javascript"></script>
-
- <!-- Bootstrap tag inputs js -->
-
- <script src="<?php echo base_url() ?>cart/js/bootstrap-tagsinput.js" type="text/javascript"></script>
-
- <!-- Toastr js -->
-
- <script src="<?php echo base_url() ?>cart/plugins/toastr/toastr.min.js" type="text/javascript"></script>
 
  <!-- Custom js -->
 
@@ -601,11 +520,7 @@
 
          var transformer = document.querySelectorAll('input[name="bas"]:checked');
          var type_transf = transformer.length > 0 ? transformer[0].value : null;
-
-         var radios = document.querySelectorAll('input[name="b"]:checked');
-         var nature = radios.length > 0 ? radios[0].value : null;
-
-
+         var nature = $('#NATURE').val();
          const is_ingredient = $('#is_ingredient').val();
          const NOMBRE_INGREDIENT = $('#NOMBRE_INGREDIENT').val();
          const cart_donnee = $('#cart').serialize();

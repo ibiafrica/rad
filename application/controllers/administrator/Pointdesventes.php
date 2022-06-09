@@ -18,23 +18,24 @@ class Pointdesventes extends Admin
 
             $arr_id = $this->input->get('id');
             $remove = false;
-            $inputValue = $this->input->post('inputValue');
-            $remove = $this->db->query('update pos_ibi_commandes set DELETED_STATUS_pos_IBI_COMMANDES=1,DELETED_COMMENT_pos_IBI_COMMANDES="oui",DELETED_USER_pos_IBI_COMMANDES=' . get_user_data('id') . ',DELETED_DATE_pos_IBI_COMMANDES="' . date('Y-m-d H:i:s') . '" where ID_pos_IBI_COMMANDES=' . $id . '');
+
+            $inputValue = $this->input->get('inputValue');
+            $remove = $this->db->query('update pos_ibi_commandes set DELETED_STATUS_POS_IBI_COMMANDES=1,DELETED_COMMENT_POS_IBI_COMMANDES="'.$inputValue.'",DELETED_USER_POS_IBI_COMMANDES=' . get_user_data('id') . ',DELETED_DATE_POS_IBI_COMMANDES="' . date('Y-m-d H:i:s') . '" where ID_POS_IBI_COMMANDES=' . $id . '');
             if ($remove) {
                 $order = $this->db->select('*')->from('pos_ibi_commandes')
-                    ->where('ID_pos_IBI_COMMANDES', $id)
+                    ->where('ID_POS_IBI_COMMANDES', $id)
                     ->get()->result()[0];
 
                 $products = $this->db->select('*')->from('pos_ibi_commandes_produits')
-                    ->where('pos_IBI_COMMANDES_ID', $id)
+                    ->where('POS_IBI_COMMANDES_ID', $id)
                     ->get()->result();
                 if (sizeof($products) > 0) {
                     for ($rr = 0; $rr < sizeof($products); $rr++) {
                         $myitem = $products[$rr];
-                        $table_article = "pos_store" . "_" . $myitem->STORE_ID_pos_IBI_COMMANDES_PRODUITS . "_ibi_articles";
-                        $table_article_flow = "pos_store" . "_" . $myitem->STORE_ID_pos_IBI_COMMANDES_PRODUITS . "_ibi_articles_stock_flow";
-                        $connected_user = get_user_data('idf');
-                        $total_with_discount = $myitem->PRIX_TOTAL - (($myitem->DISCOUNT_PERCENT * $myitem->PRIX_TOTAL) / 100);
+                        $table_article = "pos_store" . "_" . $myitem->STORE_ID_POS_IBI_COMMANDES_PRODUITS . "_ibi_articles";
+                        $table_article_flow = "pos_store" . "_" . $myitem->STORE_ID_POS_IBI_COMMANDES_PRODUITS . "_ibi_articles_stock_flow";
+                        $connected_user = get_user_data('id');
+                        $total_with_discount = ($myitem->QUANTITE*$myitem->PRIX_VENDU) - (($myitem->DISCOUNT_PERCENT * ($myitem->QUANTITE*$myitem->PRIX_VENDU)) / 100);
                         $this->db->set('QUANTITY_ARTICLE', 'QUANTITY_ARTICLE + ' . $myitem->QUANTITE, FALSE);
                         $this->db->where("CODEBAR_ARTICLE", $myitem->REF_PRODUCT_CODEBAR);
                         $is_update = $this->db->update($table_article);
@@ -45,13 +46,13 @@ class Pointdesventes extends Admin
                             "CREATED_BY_SF" => $connected_user,
                             "REF_ARTICLE_BARCODE_SF" => $myitem->REF_PRODUCT_CODEBAR,
                             "TYPE_SF" => "sale_stock_in",
-                            "UNIT_PRICE_SF" =>  $myitem->PRIX,
+                            "UNIT_PRICE_SF" =>  $myitem->PRIX_VENDU,
                             "TOTAL_PRICE_SF" => $total_with_discount,
                             "REF_PROVIDER_SF" => 0
                         );
                         $this->db->insert($table_article_flow, $dataArticleFlow);
                     }
-                    $this->db->query('update pos_ibi_commandes_produits set DELETED_STATUS_pos_IBI_COMMANDES_PRODUITS=1, DELETED_COMMENT_pos_IBI_COMMANDES_PRODUITS ="cfr command comment",DELETED_USER_pos_IBI_COMMANDES_PRODUITS=' . get_user_data('id') . ',DELETED_DATE_pos_IBI_COMMANDES_PRODUITS="' . date('Y-m-d H:i:s') . '" where pos_IBI_COMMANDES_ID=' . $id . '');
+                    $this->db->query('update pos_ibi_commandes_produits set DELETED_STATUS_POS_IBI_COMMANDES_PRODUITS=1, DELETED_COMMENT_POS_IBI_COMMANDES_PRODUITS ="cfr command comment",DELETED_USER_POS_IBI_COMMANDES_PRODUITS=' . get_user_data('id') . ',DELETED_DATE_POS_IBI_COMMANDES_PRODUITS="' . date('Y-m-d H:i:s') . '" where POS_IBI_COMMANDES_ID=' . $id . '');
                 }
 
                 set_message(cclang('has_been_deleted', 'articles'), 'success');
@@ -103,14 +104,14 @@ class Pointdesventes extends Admin
     public function ventes($client_id = 0, $cmd_id = 0, $type = 0)
     {
         if ($client_id == 0) {
-            $cmd = $this->db->select("ID_pos_IBI_COMMANDES,CLIENT_ID_COMMANDE, CODE, TVA, DATE_CREATION_pos_IBI_COMMANDES")
+            $cmd = $this->db->select("ID_POS_IBI_COMMANDES,CLIENT_ID_COMMANDE, CODE, TVA, DATE_CREATION_POS_IBI_COMMANDES")
                 ->from("pos_ibi_commandes")
-                ->where("ID_pos_IBI_COMMANDES", $cmd_id)
+                ->where("ID_POS_IBI_COMMANDES", $cmd_id)
                 ->get()->result()[0];
 
             $prods = $this->db->select("*")
                 ->from("pos_ibi_commandes_produits")
-                ->where("pos_IBI_COMMANDES_ID", $cmd->ID_pos_IBI_COMMANDES)
+                ->where("POS_IBI_COMMANDES_ID", $cmd->ID_POS_IBI_COMMANDES)
                 ->get()->result();
 
             $good_client = $this->db->select("NOM_CLIENT, PRENOM, ID_CLIENT, CLIENT_FILE_ID, CLIENT_FILE_CODE,DISCOUNT_BOISSON,DISCOUNT_FOOD")
@@ -165,10 +166,10 @@ class Pointdesventes extends Admin
                 $total_with_discount = floatval($total_brut - ($total_brut * ($discount / 100)));
                 $prix = floatval($myitem1['removedQuantity'] * floatval($myitem1['PRIX_DE_VENTE_ARTICLE']));
                 $this->db->set('QUANTITE', 'QUANTITE -' . $myitem1['removedQuantity'], FALSE);
-                $this->db->set('PRIX_TOTAL', 'PRIX_TOTAL -' . $prix, FALSE);
-                $this->db->set('DATE_MOD_pos_IBI_COMMANDES_PRODUITS', date("Y-m-d H:i:s"));
-                $this->db->where('STORE_ID_pos_IBI_COMMANDES_PRODUITS', $myitem1['STORE_ID_ARTICLE']);
-                $this->db->where("ID_pos_IBI_COMMANDES_PRODUITS", $myitem1['commandProduitId']);
+                
+                $this->db->set('DATE_MOD_POS_IBI_COMMANDES_PRODUITS', date("Y-m-d H:i:s"));
+                $this->db->where('STORE_ID_POS_IBI_COMMANDES_PRODUITS', $myitem1['STORE_ID_ARTICLE']);
+                $this->db->where("ID_POS_IBI_COMMANDES_PRODUITS", $myitem1['commandProduitId']);
                 $this->db->update($table_command_prod_name);
 
                 if (!$cmd_inserted) {
@@ -182,16 +183,16 @@ class Pointdesventes extends Admin
                     "REF_COMMAND_CODE" => $inserted_commande[1],
                     "REF_PRODUCT_CODEBAR" => $myitem1['CODEBAR_ARTICLE'],
                     "QUANTITE" => $myitem1['removedQuantity'],
-                    "PRIX" => $myitem1['PRIX_DE_VENTE_ARTICLE'],
-                    "PRIX_TOTAL" => $total_brut,
-                    "pos_IBI_COMMANDES_ID" => $inserted_commande[0],
-                    "DATE_CREATION_pos_IBI_COMMANDES_PRODUITS" => $order['dateCreation'],
+                    "PRIX_VENDU" => $myitem1['PRIX_DE_VENTE_ARTICLE'],
+                   
+                    "POS_IBI_COMMANDES_ID" => $inserted_commande[0],
+                    "DATE_CREATION_POS_IBI_COMMANDES_PRODUITS" => $order['dateCreation'],
                     "DATE_COMMANDE_PRODUITS " => $order['dateCreation'],
-                    "NAME" => $myitem1['DESIGN_ARTICLE'],
-                    "STORE_ID_pos_IBI_COMMANDES_PRODUITS" => $myitem1['STORE_ID_ARTICLE'],
+                    "NAME_PRODUIT" => $myitem1['DESIGN_ARTICLE'],
+                    "STORE_ID_POS_IBI_COMMANDES_PRODUITS" => $myitem1['STORE_ID_ARTICLE'],
                     "DISCOUNT_PERCENT" => $myitem1['discount'],
                     "CLIENT_FILE_ID_COMMANDES_PRODUITS" => $order['ID_CLIENT_FILE'],
-                    "CREATED_BY_pos_IBI_COMMANDES_PRODUITS" => $connected_user
+                    "CREATED_BY_POS_IBI_COMMANDES_PRODUITS" => $connected_user
                 );
                 $this->db->insert($table_command_prod_name, $dataToSave);
                 $req = $this->db->last_query();
@@ -387,7 +388,7 @@ class Pointdesventes extends Admin
         $cmd_prods = [];
         if ($cmd_id != 0 and $type == 1) {
             $prods = $this->db->select("REF_PRODUCT_CODEBAR,REF_COMMAND_CODE")
-                ->from("pos_ibi_commandes_produits")->where("pos_IBI_COMMANDES_ID", $cmd_id)
+                ->from("pos_ibi_commandes_produits")->where("POS_IBI_COMMANDES_ID", $cmd_id)
                 ->get()->result();
             $cmd = $prods[0]->REF_COMMAND_CODE;
         } else {
@@ -419,8 +420,8 @@ class Pointdesventes extends Admin
                 if ($type == 1) {
                     if (in_array($myitem['CODEBAR_ARTICLE'], $cmd_prods)) {
                         $this->db->set('QUANTITE', 'QUANTITE + ' . $myitem['quantity'], FALSE);
-                        $this->db->set('PRIX_TOTAL', 'PRIX_TOTAL + ' . ($myitem['quantity'] * $myitem['PRIX_DE_VENTE_ARTICLE']), false);
-                        $this->db->where('pos_IBI_COMMANDES_ID', $cmd_id);
+                        
+                        $this->db->where('POS_IBI_COMMANDES_ID', $cmd_id);
                         $this->db->where('REF_PRODUCT_CODEBAR', $myitem['CODEBAR_ARTICLE']);
                         $updated = $this->db->update($table_command_prod_name);
                         if ($updated) {
@@ -444,16 +445,16 @@ class Pointdesventes extends Admin
                             "REF_COMMAND_CODE" => $cmd,
                             "REF_PRODUCT_CODEBAR" => $myitem['CODEBAR_ARTICLE'],
                             "QUANTITE" => $myitem['quantity'],
-                            "PRIX" => $myitem['PRIX_DE_VENTE_ARTICLE'],
-                            "PRIX_TOTAL" => $total_brut,
-                            "pos_IBI_COMMANDES_ID" => $cmd_id,
-                            "DATE_CREATION_pos_IBI_COMMANDES_PRODUITS" => date("Y-m-d H:i:s"),
+                            "PRIX_VENDU" => $myitem['PRIX_DE_VENTE_ARTICLE'],
+                            
+                            "POS_IBI_COMMANDES_ID" => $cmd_id,
+                            "DATE_CREATION_POS_IBI_COMMANDES_PRODUITS" => date("Y-m-d H:i:s"),
                             "DATE_COMMANDE_PRODUITS " => date("Y-m-d H:i:s"),
-                            "NAME" => $myitem['DESIGN_ARTICLE'],
-                            "STORE_ID_pos_IBI_COMMANDES_PRODUITS" => $myitem['STORE_ID_ARTICLE'],
+                            "NAME_PRODUIT" => $myitem['DESIGN_ARTICLE'],
+                            "STORE_ID_POS_IBI_COMMANDES_PRODUITS" => $myitem['STORE_ID_ARTICLE'],
                             "DISCOUNT_PERCENT" => $myitem['discount'],
                             "CLIENT_FILE_ID_COMMANDES_PRODUITS" => $order['CLIENT_FILE_ID'],
-                            "CREATED_BY_pos_IBI_COMMANDES_PRODUITS" => $connected_user
+                            "CREATED_BY_POS_IBI_COMMANDES_PRODUITS" => $connected_user
                         );
 
                         $insert = $this->db->insert($table_command_prod_name, $dataToSave);
@@ -486,16 +487,16 @@ class Pointdesventes extends Admin
                     "REF_COMMAND_CODE" => $inserted_commande[1],
                     "REF_PRODUCT_CODEBAR" => $myitem['CODEBAR_ARTICLE'],
                     "QUANTITE" => $myitem['quantity'],
-                    "PRIX" => $myitem['PRIX_DE_VENTE_ARTICLE'],
-                    "PRIX_TOTAL" => $total_brut,
-                    "pos_IBI_COMMANDES_ID" => $inserted_commande[0],
-                    "DATE_CREATION_pos_IBI_COMMANDES_PRODUITS" => date("Y-m-d H:i:s"),
+                    "PRIX_VENDU" => $myitem['PRIX_DE_VENTE_ARTICLE'],
+                    
+                    "POS_IBI_COMMANDES_ID" => $inserted_commande[0],
+                    "DATE_CREATION_POS_IBI_COMMANDES_PRODUITS" => date("Y-m-d H:i:s"),
                     "DATE_COMMANDE_PRODUITS " => date("Y-m-d H:i:s"),
-                    "NAME" => $myitem['DESIGN_ARTICLE'],
-                    "STORE_ID_pos_IBI_COMMANDES_PRODUITS" => $myitem['STORE_ID_ARTICLE'],
+                    "NAME_PRODUIT" => $myitem['DESIGN_ARTICLE'],
+                    "STORE_ID_POS_IBI_COMMANDES_PRODUITS" => $myitem['STORE_ID_ARTICLE'],
                     "DISCOUNT_PERCENT" => $myitem['discount'],
                     "CLIENT_FILE_ID_COMMANDES_PRODUITS" => $order['CLIENT_FILE_ID'],
-                    "CREATED_BY_pos_IBI_COMMANDES_PRODUITS" => $connected_user
+                    "CREATED_BY_POS_IBI_COMMANDES_PRODUITS" => $connected_user
                 );
                 // insertion stockflow
                 $insert = $this->db->insert($table_command_prod_name, $dataToSave);
@@ -540,8 +541,8 @@ class Pointdesventes extends Admin
         $year = date("Y");
         $last = $this->db->select("*")
             ->from($table_name)
-            ->where('YEAR(DATE_CREATION_pos_IBI_COMMANDES)', $year)
-            ->order_by('ID_pos_IBI_COMMANDES', 'DESC')
+            ->where('YEAR(DATE_CREATION_POS_IBI_COMMANDES)', $year)
+            ->order_by('ID_POS_IBI_COMMANDES', 'DESC')
             ->limit(1)
             ->get()->result();
         $code_next = 1;
@@ -549,9 +550,9 @@ class Pointdesventes extends Admin
 
         if (sizeof($last) > 0) {
 
-            $iter = strlen($last[0]->ID_pos_IBI_COMMANDES);
+            $iter = strlen($last[0]->ID_POS_IBI_COMMANDES);
 
-            $code_next = $last[0]->ID_pos_IBI_COMMANDES + 1;
+            $code_next = $last[0]->ID_POS_IBI_COMMANDES + 1;
             $zeros = "";
             while ($iter < 5) {
                 $zeros = $zeros . "0";
@@ -564,12 +565,12 @@ class Pointdesventes extends Admin
             "CODE" => 'MC' . $code,
             "CLIENT_ID_COMMANDE" => $order['ID_CLIENT'],
             "ID_CASHIER_SHIFT" => $order['ID_SHIFT'],
-            "CLIENT_FILE_ID_pos_IBI_COMMANDES" => $p_file_id,
+            "CLIENT_FILE_ID_POS_IBI_COMMANDES" => $p_file_id,
             "STORE_ID_COMMADES" => 0,
             "TABLE_ID" => $order['tableid'],
-            "CREATED_BY_pos_IBI_COMMANDES" => $connected_user,
-            "DATE_CREATION_pos_IBI_COMMANDES" => date("Y-m-d H:i:s"),
-            "DATE_MOD_pos_IBI_COMMANDES" => date("Y-m-d H:i:s"),
+            "CREATED_BY_POS_IBI_COMMANDES" => $connected_user,
+            "DATE_CREATION_POS_IBI_COMMANDES" => date("Y-m-d H:i:s"),
+            "DATE_MOD_POS_IBI_COMMANDES" => date("Y-m-d H:i:s"),
             "TO_WHOM" => $split ? 0 : 1
         );
 
